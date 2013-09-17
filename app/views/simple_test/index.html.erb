@@ -1,3 +1,20 @@
-<html>
-привет
+<!DOCTYPE html>
+<html ng-app>
+<head>
+  <title>Blog</title>
+  <%= stylesheet_link_tag    "application", media: "all" %>
+  <%= javascript_include_tag "application", controller_name %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div class="container" ng-controller="IndexCtrl">
+  <h1 class="text-center">My blog</h1>
+  <div class="row" ng-repeat="post in data.posts">
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.contents }}</p>
+  </div>
+</div>
+
+</body>
 </html>

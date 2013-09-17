@@ -46,6 +46,7 @@ end
 
 gem 'execjs' 
 gem 'therubyracer'
+gem 'bootstrap-sass', '~> 2.3.1.0'
 
 group :development, :test do
 gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
