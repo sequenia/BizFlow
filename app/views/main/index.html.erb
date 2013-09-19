@@ -1,7 +1,144 @@
-<div class="container" ng-controller="IndexCtrl">
-  <h1 class="text-center">My blog</h1>
-  <div class="row" ng-repeat="post in data.posts">
-      <h2>{{ post.title }}</h2>
-      <p>{{ post.contents }}</p>
-  </div>
-</div>
+    <script type="text/javascript" src="/assets/Tangle.js"></script>
+
+    <!-- TangleKit (optional) -->
+    <link rel="stylesheet" href="/assets/TangleKit/TangleKit.css" type="text/css">
+    <script type="text/javascript" src="/assets/TangleKit/mootools.js"></script>
+    <script type="text/javascript" src="/assets/TangleKit/sprintf.js"></script>
+    <script type="text/javascript" src="/assets/TangleKit/BVTouchable.js"></script>
+    <script type="text/javascript" src="/assets/TangleKit/TangleKit.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>        
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>    
+    <script type="text/javascript">
+    var isAnyAdjustableNumberDragging = false;
+
+    Tangle.classes.OutputDrag = {
+      initialize: function (element, options, tangle, variable) {
+        this.element = element;
+        this.tangle = tangle;
+        this.variable = variable;
+
+        this.min = (options.min !== undefined) ? parseFloat(options.min) : 1;
+        this.max = (options.max !== undefined) ? parseFloat(options.max) : 10;
+        this.step = (options.step !== undefined) ? parseFloat(options.step) : 1;
+        
+        this.initializeHover();
+        this.initializeHelp();
+        this.initializeDrag();
+      },
+
+    // hover
+    
+    initializeHover: function () {
+      this.isHovering = false;
+      this.element.addEvent("mouseenter", (function () { this.isHovering = true;  this.updateRolloverEffects(); }).bind(this));
+      this.element.addEvent("mouseleave", (function () { this.isHovering = false; this.updateRolloverEffects(); }).bind(this));
+    },
+    
+    updateRolloverEffects: function () {
+      this.updateStyle();
+      this.updateCursor();
+      this.updateHelp();
+    },
+    
+    isActive: function () {
+      return this.isDragging || (this.isHovering && !isAnyAdjustableNumberDragging);
+    },
+
+    updateStyle: function () {
+      if (this.isDragging) { this.element.addClass("TKAdjustableNumberDown"); }
+      else { this.element.removeClass("TKAdjustableNumberDown"); }
+
+      if (!this.isDragging && this.isActive()) { this.element.addClass("TKAdjustableNumberHover"); }
+      else { this.element.removeClass("TKAdjustableNumberHover"); }
+    },
+
+    updateCursor: function () {
+      var body = document.getElement("body");
+      if (this.isActive()) { body.addClass("TKCursorDragHorizontal"); }
+      else { body.removeClass("TKCursorDragHorizontal"); }
+    },
+
+
+    // help
+
+    initializeHelp: function () {
+      this.helpElement = (new Element("div", { "class": "TKAdjustableNumberHelp" })).inject(this.element, "top");
+      this.helpElement.setStyle("display", "none");
+      this.helpElement.set("text", "drag");
+    },
+    
+    updateHelp: function () {
+      var size = this.element.getSize();
+      var top = -size.y + 7;
+      var left = Math.round(0.5 * (size.x - 20));
+      var display = (this.isHovering && !isAnyAdjustableNumberDragging) ? "block" : "none";
+      this.helpElement.setStyles({ left:left, top:top, display:display });
+    },
+
+
+    // drag
+    
+    initializeDrag: function () {
+      this.isDragging = false;
+      new BVTouchable(this.element, this);
+    },
+    
+    touchDidGoDown: function (touches) {
+      this.valueAtMouseDown = this.tangle.getValue(this.variable);
+      this.isDragging = true;
+      isAnyAdjustableNumberDragging = true;
+      this.updateRolloverEffects();
+      this.updateStyle();
+    },
+    
+    touchDidMove: function (touches) {
+      var value = this.valueAtMouseDown + touches.translation.x / 5 * this.step;
+      var outputNum = this.element.getAttribute("outputNum");
+      
+      value = ((value / this.step).round() * this.step).limit(this.min, this.max);
+      this.tangle.setValue(this.variable, value);
+      this.updateHelp();
+      console.log("move for " + this.element);
+      scope = angular.element(this.element).scope();
+      scope.$apply(function() {
+        scope.updateOutputQty(outputNum,value);        
+      }); 
+
+    },
+    
+    touchDidGoUp: function (touches) {
+      this.helpElement.setStyle("display", "none");
+      this.isDragging = false;
+      isAnyAdjustableNumberDragging = false;
+      this.updateRolloverEffects();
+      this.updateStyle();
+    }
+  };
+
+  function setUpTangle(){
+    var element = document.getElementById("production");          
+    var tangle = new Tangle(element, {
+      initialize: function () {
+        this.outputQty = 450;               
+      },
+      update: function () { 
+        this.outputQty = 450;     
+      }
+    });
+  }
+
+  </script>
+  <body onload="setUpTangle();">  
+    <div id = "production" class="container" ng-controller="IndexCtrl">
+      <h1 class="text-center">Производство</h1>
+      <div class="row" id = "ttest" ng-repeat="input in productionOrder.inputs">
+        <h2>{{ input.productName }}</h2>  
+        <span class="TKAdjustableNumber" ng-model="input.qty" ng-mousedown="mouseDown($event, input)" ng-mousemove="mouseDown($event, input)">{{ input.qty }}  </span>            
+      </div>
+      <h1>Выход:</h1>
+      <div class="row" ng-repeat="output in productionOrder.outputs">
+        <h2>{{ output.productName }}</h2>  
+        <span class="OutputDrag" ng-model="output.qty" outputNum = {{$index}} data-min="0" data-max="2000">{{ output.qty }}  </span>            
+      </div>
+    </div>
+  </body>

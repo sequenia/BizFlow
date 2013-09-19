@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html ng-app>
 <head>
-  <title>Blog</title>
-  <%= stylesheet_link_tag    "application", media: "all" %>
-  <%= javascript_include_tag "application", controller_name %>
-  <%= csrf_meta_tags %>
+	<title>Blog</title>
+	<%= stylesheet_link_tag    "application", media: "all" %>
+	<%= javascript_include_tag "application", controller_name %>
+	<%= csrf_meta_tags %>
 </head>
 <body>
-
-<div class="container" ng-controller="IndexCtrl">
-  <h1 class="text-center">My blog</h1>
-  <div class="row" ng-repeat="post in data.posts">
-      <h2>{{ post.title }}</h2>
-      <p>{{ post.contents }}</p>
-  </div>
-</div>
-
+	<script type="text/javascript">
+	$(document).delegate('#divProductImagesCarousel', 'swipeleft swiperight', function (event) {
+		alert('You just ' + event.type + 'ed!');
+	});
+	</script>
+	<div class="container" ng-controller="IndexCtrl">
+		<h1 class="text-center">Производство</h1>
+		<div class="row" ng-repeat="post in data.posts">
+			<h2>{{ post.title }}</h2>
+			<p>{{ post.contents }}</p>
+		</div>
+	</div>
+    	<div id = "test">
+		Проверка
+	</div>
 </body>
 </html>
