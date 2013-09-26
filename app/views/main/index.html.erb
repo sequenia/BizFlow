@@ -84,7 +84,8 @@
     },
     
     touchDidGoDown: function (touches) {
-      this.valueAtMouseDown = this.tangle.getValue(this.variable);
+      
+      this.valueAtMouseDown = 12;
       this.isDragging = true;
       isAnyAdjustableNumberDragging = true;
       this.updateRolloverEffects();
@@ -94,16 +95,14 @@
     touchDidMove: function (touches) {
       var value = this.valueAtMouseDown + touches.translation.x / 5 * this.step;
       var outputNum = this.element.getAttribute("outputNum");
-      
-      value = ((value / this.step).round() * this.step).limit(this.min, this.max);
-      this.tangle.setValue(this.variable, value);
+      console.log(outputNum);
+      value = ((value / this.step).round() * this.step).limit(this.min, this.max);      
       this.updateHelp();
       console.log("move for " + this.element);
       scope = angular.element(this.element).scope();
       scope.$apply(function() {
         scope.updateOutputQty(outputNum,value);        
       }); 
-
     },
     
     touchDidGoUp: function (touches) {
