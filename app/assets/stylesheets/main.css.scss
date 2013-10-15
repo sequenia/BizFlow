@@ -4,3 +4,84 @@
 
 
 @import "bootstrap";
+@import "bootstrap-responsive";
+
+body {
+    background-repeat:no-repeat;
+}
+
+.center {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.mixer-input { 
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px;
+	border-radius:6px;
+	background-color: #EFEFFF; 
+	-khtml-border-radius:10px;
+	padding-bottom: 0.5em;
+}
+
+.mixer-output { 
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px;
+	border-radius:6px;
+	background-color: #FFE8DD; 
+	-khtml-border-radius:10px;
+	padding-bottom: 0.5em;
+}
+
+.mixer-body { 
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px;
+	border-radius:6px;
+	background-color: #D8D8D8; 
+	-khtml-border-radius:10px;
+}
+
+.arrow-input {
+	position: relative;
+	width: 2em;
+	height: 1.4em;
+	background: #8785FF;
+	font-size: 12px;
+	margin: 0 auto;
+}
+
+.arrow-input::before {
+	position: absolute;
+	bottom: -1.2em;
+	left: -1em;
+	border-top: 1.4em solid #8785FF;
+	border-right: 2em solid rgba(44, 44, 44, 0);
+	border-left: 2em solid rgba(44, 44, 44, 0);
+	content: "";
+}
+
+.arrow-output {
+	position: relative;
+	width: 2em;
+	height: 1.4em;
+	background: #FFA579;
+	font-size: 12px;
+	margin: 0 auto;
+}
+
+.arrow-output::before {
+	position: absolute;
+	bottom: -1.2em;
+	left: -1em;
+	border-top: 1.4em solid #FFA579;
+	border-right: 2em solid rgba(44, 44, 44, 0);
+	border-left: 2em solid rgba(44, 44, 44, 0);
+	content: "";
+}

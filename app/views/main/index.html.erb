@@ -1,17 +1,7 @@
-    <script type="text/javascript" src="/assets/Tangle.js"></script>
-
-    <!-- TangleKit (optional) -->
-    <link rel="stylesheet" href="/assets/TangleKit/TangleKit.css" type="text/css">
-    <script type="text/javascript" src="/assets/TangleKit/mootools.js"></script>
-    <script type="text/javascript" src="/assets/TangleKit/sprintf.js"></script>
-    <script type="text/javascript" src="/assets/TangleKit/BVTouchable.js"></script>
-    <script type="text/javascript" src="/assets/TangleKit/TangleKit.js"></script>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>        
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>    
     <script type="text/javascript">
     var isAnyAdjustableNumberDragging = false;
 
-    Tangle.classes.OutputDrag = {
+    Tangle.classes.ItemDrag = {
       initialize: function (element, options, tangle, variable) {
         this.element = element;
         this.tangle = tangle;
@@ -24,6 +14,7 @@
         this.initializeHover();
         this.initializeHelp();
         this.initializeDrag();
+        this.initializeStyle();
       },
 
     // hover
@@ -34,8 +25,12 @@
       this.element.addEvent("mouseleave", (function () { this.isHovering = false; this.updateRolloverEffects(); }).bind(this));
     },
     
+    initializeStyle: function() {
+      this.element.addClass("TKAdjustableNumberDown");
+      this.element.addClass("TKAdjustableNumberHover");
+    },
+    
     updateRolloverEffects: function () {
-      this.updateStyle();
       this.updateCursor();
       this.updateHelp();
     },
@@ -44,12 +39,8 @@
       return this.isDragging || (this.isHovering && !isAnyAdjustableNumberDragging);
     },
 
-    updateStyle: function () {
-      if (this.isDragging) { this.element.addClass("TKAdjustableNumberDown"); }
-      else { this.element.removeClass("TKAdjustableNumberDown"); }
+    updateStyle: function (value) {
 
-      if (!this.isDragging && this.isActive()) { this.element.addClass("TKAdjustableNumberHover"); }
-      else { this.element.removeClass("TKAdjustableNumberHover"); }
     },
 
     updateCursor: function () {
@@ -84,24 +75,26 @@
     },
     
     touchDidGoDown: function (touches) {
-      
-      this.valueAtMouseDown = 12;
+      var collectionName = this.element.getAttribute("collectionName"); 
+      var itemNum = this.element.getAttribute("itemNum");
+      this.valueAtMouseDown = angular.element(this.element).scope().getItemQty(collectionName, itemNum);
       this.isDragging = true;
       isAnyAdjustableNumberDragging = true;
       this.updateRolloverEffects();
-      this.updateStyle();
     },
     
     touchDidMove: function (touches) {
       var value = this.valueAtMouseDown + touches.translation.x / 5 * this.step;
-      var outputNum = this.element.getAttribute("outputNum");
-      console.log(outputNum);
-      value = ((value / this.step).round() * this.step).limit(this.min, this.max);      
+      var collectionName = this.element.getAttribute("collectionName");
+      var itemNum = this.element.getAttribute("itemNum");
+      console.log(itemNum);
+      value = ((value / this.step).round() * this.step);
+      if(value < this.min) value = this.min;
       this.updateHelp();
       console.log("move for " + this.element);
       scope = angular.element(this.element).scope();
       scope.$apply(function() {
-        scope.updateOutputQty(outputNum,value);        
+        scope.updateItemQty(collectionName, itemNum, value);        
       }); 
     },
     
@@ -110,7 +103,6 @@
       this.isDragging = false;
       isAnyAdjustableNumberDragging = false;
       this.updateRolloverEffects();
-      this.updateStyle();
     }
   };
 
@@ -118,26 +110,63 @@
     var element = document.getElementById("production");          
     var tangle = new Tangle(element, {
       initialize: function () {
-        this.outputQty = 450;               
+        
       },
       update: function () { 
-        this.outputQty = 450;     
+        
       }
     });
   }
 
+  $(document).ready(function() {
+      $('.order-select').bind('click', function(){
+          setUpTangle();
+      });
+  });
+
   </script>
-  <body onload="setUpTangle();">  
-    <div id = "production" class="container" ng-controller="IndexCtrl">
-      <h1 class="text-center">Производство</h1>
-      <div class="row" id = "ttest" ng-repeat="input in productionOrder.inputs">
-        <h2>{{ input.productName }}</h2>  
-        <span class="TKAdjustableNumber" ng-model="input.qty" ng-mousedown="mouseDown($event, input)" ng-mousemove="mouseDown($event, input)">{{ input.qty }}  </span>            
-      </div>
-      <h1>Выход:</h1>
-      <div class="row" ng-repeat="output in productionOrder.outputs">
-        <h2>{{ output.productName }}</h2>  
-        <span class="OutputDrag" ng-model="output.qty" outputNum = {{$index}} data-min="0" data-max="2000">{{ output.qty }}  </span>            
+  <body onload="setUpTangle();">
+    <div id = "production" class="container-fluid text-center" ng-controller="IndexCtrl">
+      <div class="row-fluid">
+
+        <div class="span9">
+          <div class="row-fluid">
+            <div class="span{{ 12 / orders[currentOrder].inputs.length }}" ng-repeat="input in orders[currentOrder].inputs">
+              <div class="mixer-input">
+                <h3>{{ input.productName }}</h3>
+                <span class="ItemDrag" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ input.qty }}</span>
+              </div> 
+              <div class="arrow-input"></div>        
+            </div>
+          </div>
+
+          <div class="row-fluid mixer-body">
+            <h2>Рецепт: </h2>
+            <select class="order-select" ng-model="currentOrder">
+              <option ng-repeat="order in orders">{{ order.name }}</option>
+            </select>
+          </div>
+
+          <div class="row-fluid">
+            <div class="span{{ 12 / orders[currentOrder].outputs.length }}" ng-repeat="output in orders[currentOrder].outputs">
+              <div class="arrow-output"></div>
+              <div class="mixer-output">
+                <h3>{{ output.productName }}</h3> 
+                <span class="ItemDrag" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ output.qty }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="span3">
+          <div class="row-fluid">
+            <h3>Сумма производства: {{ orders[currentOrder].inputsTotal }} </h3>
+          </div>
+          <div class="row-fluid">
+            <h3>Сумма выхода: {{ orders[currentOrder].outputsTotal }} </h3>
+          </div>
+        </div>
+
       </div>
     </div>
   </body>
