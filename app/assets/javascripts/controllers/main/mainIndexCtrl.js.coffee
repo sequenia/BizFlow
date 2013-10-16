@@ -50,13 +50,13 @@ class ExtMath extends Math
 			else return 0
 
 	$scope.orders = 
-		'Тесто':
+		'Замес теста':
 				inputs: [{productName: "Мука", qty:10, pct:50, onHand:1000},
 						{productName: "Вода", qty:10, pct:50, onHand:1000}],
 				outputs:[{productName: "Тесто", qty:10, pct:100, onHand:1000}],
 				inputsTotal: 0,
 				outputsTotal: 0,
-				name: 'Тесто'
+				name: 'Замес теста'
 		'Просев гипса':
 				inputs: [{productName: "Гипс Казань", qty:10, pct:10, onHand:1000},
 						{productName: "Гипс Сибирь", qty:20, pct:20, onHand:1000},
