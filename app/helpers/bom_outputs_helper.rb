@@ -1,0 +1,2 @@
+module BomOutputsHelper
+end

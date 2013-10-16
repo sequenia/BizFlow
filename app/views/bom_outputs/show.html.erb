@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Item:</strong>
+  <%= @bom_output.item %>
+</p>
+
+<p>
+  <strong>Qty:</strong>
+  <%= @bom_output.qty %>
+</p>
+
+<%= link_to 'Edit', edit_bom_output_path(@bom_output) %> |
+<%= link_to 'Back', bom_outputs_path %>

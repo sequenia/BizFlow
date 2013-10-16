@@ -1,0 +1,27 @@
+<h1>Listing boms</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @boms.each do |bom| %>
+      <tr>
+        <td><%= bom.name %></td>
+        <td><%= link_to 'Show', bom %></td>
+        <td><%= link_to 'Edit', edit_bom_path(bom) %></td>
+        <td><%= link_to 'Destroy', bom, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Bom', new_bom_path %>

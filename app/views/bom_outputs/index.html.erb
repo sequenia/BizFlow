@@ -1,0 +1,29 @@
+<h1>Listing bom_outputs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Qty</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @bom_outputs.each do |bom_output| %>
+      <tr>
+        <td><%= bom_output.item %></td>
+        <td><%= bom_output.qty %></td>
+        <td><%= link_to 'Show', bom_output %></td>
+        <td><%= link_to 'Edit', edit_bom_output_path(bom_output) %></td>
+        <td><%= link_to 'Destroy', bom_output, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Bom output', new_bom_output_path %>
