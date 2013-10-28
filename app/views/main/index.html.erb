@@ -118,9 +118,7 @@
   }
 
   $(document).ready(function() {
-      $('.order-select').bind('change', function(){
-          setUpTangle();
-      });
+      $('.order-select').bind('change', setUpTangle);
   });
 
   </script>
@@ -130,10 +128,10 @@
 
         <div class="span9">
           <div class="row-fluid">
-            <div class="span{{ 12 / orders[currentOrder].inputs.length }}" ng-repeat="input in orders[currentOrder].inputs">
+            <div class="span{{ inputSpanType() }}" ng-repeat="input in recipes[order.recipeName].inputs">
               <div class="mixer-input">
                 <h3>{{ input.productName }} ({{ input.pct }}%)</h3>
-                <span class="ItemDrag over-max-{{ input.qty > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ input.qty }}</span> 
+                <span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ order.inputs[$index] }}</span> 
               </div> 
               <div class="arrow-input"></div>        
             </div>
@@ -141,20 +139,18 @@
 
           <div class="row-fluid mixer-body">          
             <h2>Операция: </h2>
-            <select class="order-select" ng-model="currentOrder">
-              <option ng-repeat="order in orders">{{ order.name }}</option>              
+            <select class="order-select" ng-model="order.recipeName" ng-change="setUpOrder()">
+              <option ng-repeat="recipe in recipes">{{ recipe.name }}</option>              
             </select>                        
           </h2>
-          
-
           </div>
 
           <div class="row-fluid">
-            <div class="span{{ 12 / orders[currentOrder].outputs.length }}" ng-repeat="output in orders[currentOrder].outputs">
+            <div class="span{{ outputSpanType() }}" ng-repeat="output in recipes[order.recipeName].outputs">
               <div class="arrow-output"></div>
               <div class="mixer-output">
                 <h3>{{ output.productName }} ({{ output.pct }}%)</h3>  
-                <span class="ItemDrag over-max-{{ output.qty > output.onHand }}" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ output.qty }}</span>                
+                <span class="ItemDrag over-max-{{ order.outputs[$index] > output.onHand }}" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span>                
               </div>
             </div>
           </div>
@@ -168,7 +164,7 @@
 
         <div class="span3">
           <div class="row-fluid">
-            <h3>Общий объем производства: {{ orders[currentOrder].inputsTotal }} </h3>
+            <h3>Общий объем производства: {{ order.inputsTotal }} </h3>
           </div>                                 
         </div>
       </div>      

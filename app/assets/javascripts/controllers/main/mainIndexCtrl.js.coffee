@@ -7,35 +7,35 @@ class ExtMath extends Math
 @IndexCtrl = ($scope) ->
 	$scope.updateOutputQty = (outputNum, value) ->
 		sum = 0
-		current = $scope.currentOrder
-		onePct = value / $scope.orders[current].outputs[outputNum].pct
-		for i in [0...$scope.orders[current].outputs.length]
-			$scope.orders[current].outputs[i].qty = ExtMath.truncate onePct * $scope.orders[current].outputs[i].pct,2
-			sum += $scope.orders[current].outputs[i].qty
-		$scope.orders[current].outputsTotal = sum
+		recipeName = $scope.order.recipeName
+		onePct = value / $scope.recipes[recipeName].outputs[outputNum].pct
+		for i in [0...$scope.order.outputs.length]
+			$scope.order.outputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].outputs[i].pct, 2
+			sum += $scope.order.outputs[i]
+		$scope.order.outputsTotal = sum
 		onePct = sum / 100
-		for i in [0...$scope.orders[current].inputs.length]
-			$scope.orders[current].inputs[i].qty = ExtMath.truncate (onePct * $scope.orders[current].inputs[i].pct),2
-		$scope.orders[current].inputsTotal = sum
+		for i in [0...$scope.order.inputs.length]
+			$scope.order.inputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].inputs[i].pct, 2
+		$scope.order.inputsTotal = sum
 
 	$scope.updateInputQty = (inputNum, value) ->
 		sum = 0
-		current = $scope.currentOrder
-		onePct = value / $scope.orders[current].inputs[inputNum].pct
-		for i in [0...$scope.orders[current].inputs.length]
-			$scope.orders[current].inputs[i].qty = ExtMath.truncate  onePct * $scope.orders[current].inputs[i].pct, 2
-			sum += $scope.orders[current].inputs[i].qty
-		$scope.orders[current].inputsTotal = sum
+		recipeName = $scope.order.recipeName
+		onePct = value / $scope.recipes[recipeName].inputs[inputNum].pct
+		for i in [0...$scope.order.inputs.length]
+			$scope.order.inputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].inputs[i].pct, 2
+			sum += $scope.order.inputs[i]
+		$scope.order.inputsTotal = sum
 		onePct = sum / 100
-		for i in [0...$scope.orders[current].outputs.length]
-			$scope.orders[current].outputs[i].qty = ExtMath.truncate  onePct * $scope.orders[current].outputs[i].pct, 2
-		$scope.orders[current].outputsTotal = sum
+		for i in [0...$scope.order.outputs.length]
+			$scope.order.outputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].outputs[i].pct, 2
+		$scope.order.outputsTotal = sum
 
 	$scope.getOutputQty = (outputNum) ->
-		return $scope.orders[$scope.currentOrder].outputs[outputNum].qty
+		return $scope.order.outputs[outputNum]
 
 	$scope.getInputQty = (inputNum) ->
-		return $scope.orders[$scope.currentOrder].inputs[inputNum].qty
+		return $scope.order.inputs[inputNum]
 
 	$scope.getItemQty = (collectionName, itemNum) ->
 		switch collectionName
@@ -49,26 +49,39 @@ class ExtMath extends Math
 			when "outputs" then $scope.updateOutputQty(itemNum, value)
 			else return 0
 
-	$scope.orders = 
+	$scope.inputSpanType = () ->
+		return 12 / $scope.recipes[$scope.order.recipeName].inputs.length
+
+	$scope.outputSpanType = () ->
+		return 12 / $scope.recipes[$scope.order.recipeName].outputs.length
+
+	$scope.setUpOrder = () ->
+		recipeName = $scope.order.recipeName
+		inputsLength = $scope.recipes[recipeName].inputs.length
+		outputsLength = $scope.recipes[recipeName].outputs.length
+		$scope.order.inputs = new Array(inputsLength)
+		$scope.order.outputs = new Array(outputsLength)
+
+		if inputsLength != 0
+			$scope.updateInputQty(0, $scope.recipes[recipeName].inputs[0].pct)
+
+	$scope.recipes = 
 		'Замес теста':
-				inputs: [{productName: "Мука", qty:10, pct:50, onHand:1000},
-						{productName: "Вода", qty:10, pct:50, onHand:1000}],
-				outputs:[{productName: "Тесто", qty:10, pct:100, onHand:1000}],
-				inputsTotal: 0,
-				outputsTotal: 0,
+				inputs: [{productName: "Мука", pct:50, onHand:1000},
+						{productName: "Вода", pct:50, onHand:1000}],
+				outputs:[{productName: "Тесто", pct:100, onHand:1000}],
 				name: 'Замес теста'
 		'Просев гипса':
-				inputs: [{productName: "Гипс Казань", qty:10, pct:10, onHand:1000},
-						{productName: "Гипс Сибирь", qty:20, pct:20, onHand:1000},
-						{productName: "Гипс Майкоп", qty:30, pct:50, onHand:1000}],
-				outputs:[{productName: "Гипс Очищенный-1", qty:10, pct:40, onHand:1000},
-						{productName: "Гипс Очищенный-2", qty:60, pct:60, onHand:1000}],
-				inputsTotal: 0,
-				outputsTotal: 0,
+				inputs: [{productName: "Гипс Казань", pct:10, onHand:1000},
+						{productName: "Гипс Сибирь", pct:40, onHand:1000},
+						{productName: "Гипс Майкоп", pct:50, onHand:1000}],
+				outputs:[{productName: "Гипс Очищенный-1", pct:40, onHand:1000},
+						{productName: "Гипс Очищенный-2", pct:60, onHand:1000}],
 				name: 'Просев гипса'
 
-	for key of $scope.orders
-		$scope.currentOrder = key
-		if $scope.orders[key].inputs.length != 0
-			$scope.updateInputQty(0, $scope.orders[key].inputs[0].pct)
+	$scope.order = {}
 
+	for key of $scope.recipes
+		$scope.order.recipeName = $scope.recipes[key].name
+		$scope.setUpOrder()
+		break
