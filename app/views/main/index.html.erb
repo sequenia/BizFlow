@@ -26,8 +26,7 @@
     },
     
     initializeStyle: function() {
-      this.element.addClass("TKAdjustableNumberDown");
-      this.element.addClass("TKAdjustableNumberHover");
+
     },
     
     updateRolloverEffects: function () {
@@ -119,7 +118,7 @@
   }
 
   $(document).ready(function() {
-      $('.order-select').bind('click', function(){
+      $('.order-select').bind('change', function(){
           setUpTangle();
       });
   });
@@ -134,7 +133,7 @@
             <div class="span{{ 12 / orders[currentOrder].inputs.length }}" ng-repeat="input in orders[currentOrder].inputs">
               <div class="mixer-input">
                 <h3>{{ input.productName }} ({{ input.pct }}%)</h3>
-                <span class="ItemDrag" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ input.qty }}</span> 
+                <span class="ItemDrag over-max-{{ input.qty > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ input.qty }}</span> 
               </div> 
               <div class="arrow-input"></div>        
             </div>
@@ -155,7 +154,7 @@
               <div class="arrow-output"></div>
               <div class="mixer-output">
                 <h3>{{ output.productName }} ({{ output.pct }}%)</h3>  
-                <span class="ItemDrag" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ output.qty }}</span>                
+                <span class="ItemDrag over-max-{{ output.qty > output.onHand }}" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ output.qty }}</span>                
               </div>
             </div>
           </div>

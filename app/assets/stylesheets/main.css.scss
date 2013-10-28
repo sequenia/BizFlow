@@ -22,22 +22,22 @@ body {
 	text-align: right;
 }
 
-.mixer-input { 
+.mixer-input {
+	padding-bottom: 0.5em; 
 	-webkit-border-radius:6px; 
 	-moz-border-radius:5px;
 	border-radius:6px;
 	background-color: #EFEFFF; 
 	-khtml-border-radius:10px;
-	padding-bottom: 0.5em;
 }
 
-.mixer-output { 
+.mixer-output {
+	padding-bottom: 0.5em; 
 	-webkit-border-radius:6px; 
 	-moz-border-radius:5px;
 	border-radius:6px;
 	background-color: #FFE8DD; 
 	-khtml-border-radius:10px;
-	padding-bottom: 0.5em;
 }
 
 .mixer-body { 
@@ -50,11 +50,11 @@ body {
 
 .arrow-input {
 	position: relative;
+	margin: 0 auto;
 	width: 2em;
 	height: 1.4em;
 	background: #8785FF;
 	font-size: 12px;
-	margin: 0 auto;
 }
 
 .arrow-input::before {
@@ -69,11 +69,11 @@ body {
 
 .arrow-output {
 	position: relative;
+	margin: 0 auto;
 	width: 2em;
 	height: 1.4em;
 	background: #FFA579;
 	font-size: 12px;
-	margin: 0 auto;
 }
 
 .arrow-output::before {
@@ -84,4 +84,14 @@ body {
 	border-right: 2em solid rgba(44, 44, 44, 0);
 	border-left: 2em solid rgba(44, 44, 44, 0);
 	content: "";
+}
+
+.over-max-false {
+	color: #00c;
+	border-bottom: 1px dashed #00c;
+}
+
+.over-max-true {
+	color: #f00;
+	border-bottom: 1px dashed #f00;
 }

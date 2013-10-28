@@ -11,7 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130917065949) do
+ActiveRecord::Schema.define(version: 20131002112510) do
+
+  create_table "bom_outputs", force: true do |t|
+    t.integer  "item_id"
+    t.float    "qty"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "bom_outputs", ["item_id"], name: "index_bom_outputs_on_item_id"
+
+  create_table "boms", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "items", force: true do |t|
+    t.string   "name"
+    t.float    "qty"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "simple_tests", force: true do |t|
     t.datetime "created_at"
