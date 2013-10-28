@@ -65,6 +65,10 @@ class ExtMath extends Math
 		if inputsLength != 0
 			$scope.updateInputQty(0, $scope.recipes[recipeName].inputs[0].pct)
 
+	$scope.execute = () ->
+		if $scope.order.length != 0
+			$scope.history.push($.extend(true, {}, $scope.order))
+
 	$scope.recipes = 
 		'Замес теста':
 				inputs: [{productName: "Мука", pct:50, onHand:1000},
@@ -80,6 +84,7 @@ class ExtMath extends Math
 				name: 'Просев гипса'
 
 	$scope.order = {}
+	$scope.history = []
 
 	for key of $scope.recipes
 		$scope.order.recipeName = $scope.recipes[key].name

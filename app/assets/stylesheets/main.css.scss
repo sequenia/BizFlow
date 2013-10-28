@@ -48,6 +48,22 @@ body {
 	-khtml-border-radius:10px;
 }
 
+.history-body {
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px;
+	border-radius:6px;
+	background-color: #E3E3E3; 
+	-khtml-border-radius:10px;
+}
+
+.history-all {
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px;
+	border-radius:6px;
+	background-color: #F5F5F5; 
+	-khtml-border-radius:10px;
+}
+
 .arrow-input {
 	position: relative;
 	margin: 0 auto;
