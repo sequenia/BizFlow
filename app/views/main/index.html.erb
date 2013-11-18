@@ -1,134 +1,53 @@
-    <script type="text/javascript">
-    var isAnyAdjustableNumberDragging = false;
+  <script type="text/javascript">
+  // Инициализация объекта класса Clarity,
+  // который устанавливает поведение для DOM-элементов с классами из ClarityKit.js.
+  // Функцию нужно вызывать всякий раз, когда на странице появляются новые элементы 
+  // с данными классами
+  function setUpClarity()
+  {
+    var element = document.getElementById("production"); 
 
-    Tangle.classes.ItemDrag = {
-      initialize: function (element, options, tangle, variable) {
-        this.element = element;
-        this.tangle = tangle;
-        this.variable = variable;
+    var clarity = new Clarity(element);
+  }
 
-        this.min = (options.min !== undefined) ? parseFloat(options.min) : 1;
-        this.max = (options.max !== undefined) ? parseFloat(options.max) : 10;
-        this.step = (options.step !== undefined) ? parseFloat(options.step) : 1;
-        
-        this.initializeHover();
-        this.initializeHelp();
-        this.initializeDrag();
-        this.initializeStyle();
-      },
-
-    // hover
-    
-    initializeHover: function () {
-      this.isHovering = false;
-      this.element.addEvent("mouseenter", (function () { this.isHovering = true;  this.updateRolloverEffects(); }).bind(this));
-      this.element.addEvent("mouseleave", (function () { this.isHovering = false; this.updateRolloverEffects(); }).bind(this));
-    },
-    
-    initializeStyle: function() {
-
-    },
-    
-    updateRolloverEffects: function () {
-      this.updateCursor();
-      this.updateHelp();
-    },
-    
-    isActive: function () {
-      return this.isDragging || (this.isHovering && !isAnyAdjustableNumberDragging);
-    },
-
-    updateStyle: function (value) {
-
-    },
-
-    updateCursor: function () {
-      var body = document.getElement("body");
-      if (this.isActive()) { body.addClass("TKCursorDragHorizontal"); }
-      else { body.removeClass("TKCursorDragHorizontal"); }
-    },
-
-
-    // help
-
-    initializeHelp: function () {
-      this.helpElement = (new Element("div", { "class": "TKAdjustableNumberHelp" })).inject(this.element, "top");
-      this.helpElement.setStyle("display", "none");
-      this.helpElement.set("text", "drag");
-    },
-    
-    updateHelp: function () {
-      var size = this.element.getSize();
-      var top = -size.y + 7;
-      var left = Math.round(0.5 * (size.x - 20));
-      var display = (this.isHovering && !isAnyAdjustableNumberDragging) ? "block" : "none";
-      this.helpElement.setStyles({ left:left, top:top, display:display });
-    },
-
-
-    // drag
-    
-    initializeDrag: function () {
-      this.isDragging = false;
-      new BVTouchable(this.element, this);
-    },
-    
-    touchDidGoDown: function (touches) {
-      var collectionName = this.element.getAttribute("collectionName"); 
-      var itemNum = this.element.getAttribute("itemNum");
-      this.valueAtMouseDown = angular.element(this.element).scope().getItemQty(collectionName, itemNum);
-      this.isDragging = true;
-      isAnyAdjustableNumberDragging = true;
-      this.updateRolloverEffects();
-    },
-    
-    touchDidMove: function (touches) {
-      var value = this.valueAtMouseDown + touches.translation.x / 5 * this.step;
-      var collectionName = this.element.getAttribute("collectionName");
-      var itemNum = this.element.getAttribute("itemNum");
-      console.log(itemNum);
-      value = ((value / this.step).round() * this.step);
-      if(value < this.min) value = this.min;
-      this.updateHelp();
-      console.log("move for " + this.element);
-      scope = angular.element(this.element).scope();
-      scope.$apply(function() {
-        scope.updateItemQty(collectionName, itemNum, value);        
-      }); 
-    },
-    
-    touchDidGoUp: function (touches) {
-      this.helpElement.setStyle("display", "none");
-      this.isDragging = false;
-      isAnyAdjustableNumberDragging = false;
-      this.updateRolloverEffects();
-    }
-  };
-
-  function setUpTangle(){
-    var element = document.getElementById("production");          
-    var tangle = new Tangle(element, {
-      initialize: function () {
-        
-      },
-      update: function () { 
-        
-      }
-    });
+  function scrollDown()
+  {
+    $('html, body').animate({
+        scrollTop: $("#orderRow").offset().top
+    }, "slow");
   }
 
   $(document).ready(function() {
-      $('.order-select').bind('change', setUpTangle);
+      $('.order-select').bind('change', setUpClarity);
+      $('#submitBtn').bind('click', scrollDown)
   });
-
   </script>
-  <body onload="setUpTangle();">
+
+  <body onload="setUpClarity();">
     <div id = "production" class="container-fluid text-center" ng-controller="IndexCtrl">
 
-      <div class="row-fluid history-all">
-        <div class="row-fluid" ng-repeat="oldOrder in history">
+      <!-- Меню -->
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <span class="brand"></span>
+          <ul class="nav">
+            <li>
+              <form class="navbar-search pull-left">
+                История: <input type="text" class="search-query" placeholder="Фильтр" ng-model="query">
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- .... -->
+
+      <!-- ИСТОРИЯ ПРОИЗВОДСТВА ............................................................ -->
+      <div id="historyRow" class="row-fluid">
+        <div class="row-fluid history-all" ng-repeat="oldOrder in history | filter:query">
           <div class="row-fluid">
             <div class="span9">
+
+              <!-- Входные данные -->
               <div class="row-fluid">
                 <div class="span{{ 12 / oldOrder.inputs.length }}" ng-repeat="input in recipes[oldOrder.recipeName].inputs">
                   <div class="history-body">
@@ -138,9 +57,13 @@
                   <div class="arrow-input"></div> 
                 </div>
               </div>
+              <!-- .............. -->
+
               <div class="row-fluid history-body">
-                <h2>Операция: {{history[$index].recipeName}} </h2>
+                <h2>Операция: {{oldOrder.recipeName}} </h2>
               </div>
+
+              <!-- Выходные данные -->
               <div class="row-fluid">
                 <div class="span{{ 12 / oldOrder.outputs.length }}" ng-repeat="output in recipes[oldOrder.recipeName].outputs">
                   <div class="arrow-output"></div> 
@@ -150,6 +73,8 @@
                   </div> 
                 </div>
               </div>
+              <!-- ............... -->
+
             </div>
             <div class="span3">
               <div class="row-fluid">
@@ -157,14 +82,16 @@
               </div>  
             </div>
           </div>
-          <div class="row-fluid">
-            <hr/>
-          </div>
+          <br/>
         </div>
       </div>
+      <!-- ................................................................................. -->
 
+      <!-- ТЕКУЩИЙ ЗАКАЗ ................................................................... -->
       <div id="orderRow" class="row-fluid">
         <div class="span9">
+
+          <!-- Входные данные -->
           <div class="row-fluid">
             <div class="span{{ inputSpanType() }}" ng-repeat="input in recipes[order.recipeName].inputs">
               <div class="mixer-input">
@@ -174,6 +101,7 @@
               <div class="arrow-input"></div>        
             </div>
           </div>
+          <!-- ............. -->
 
           <div class="row-fluid mixer-body">          
             <h2>Операция: </h2>
@@ -182,21 +110,23 @@
             </select>                        
           </div>
 
+          <!-- Выходные данные -->
           <div class="row-fluid">
             <div class="span{{ outputSpanType() }}" ng-repeat="output in recipes[order.recipeName].outputs">
               <div class="arrow-output"></div>
               <div class="mixer-output">
                 <h3>{{ output.productName }} ({{ output.pct }}%)</h3>  
-                <span class="ItemDrag over-max-{{ order.outputs[$index] > output.onHand }}" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span>                
+                <span class="ItemDrag over-max-false" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span>                
               </div>
             </div>
           </div>
+          <!-- ............. -->
 
           <br/>
 
           <div class="row-fluid">
             <form ng-submit="execute()">
-              <input class="btn btn-default btn-lg" type="submit" value="Пуск!">
+              <input id="submitBtn" class="btn btn-default btn-lg" type="submit" value="Пуск!">
             </form>
           </div>
         </div>
@@ -207,6 +137,7 @@
           </div>                                 
         </div>
       </div> 
+      <!-- ................................................................................. -->
 
     </div>
   </body>
