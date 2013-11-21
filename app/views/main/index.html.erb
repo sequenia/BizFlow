@@ -23,7 +23,7 @@
   });
   </script>
 
-  <body onload="setUpClarity();">
+  <body ng-app="myApp" onload="">
     <div id = "production" class="container-fluid text-center" ng-controller="IndexCtrl">
 
       <!-- Меню -->
@@ -40,6 +40,10 @@
         </div>
       </div>
       <!-- .... -->
+
+      <!--<span>Status: {{status}}</span><br/>-->
+      <!--<span>Data: {{data}}</span><br/>-->
+      <!--<span>Recipes: {{recipes}}</span>-->
 
       <!-- ИСТОРИЯ ПРОИЗВОДСТВА ............................................................ -->
       <div id="historyRow" class="row-fluid">

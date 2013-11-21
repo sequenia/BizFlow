@@ -4,7 +4,16 @@ class ExtMath extends Math
     scale = scales[precision]
     Math.round(x * scale) / scale
 
-@IndexCtrl = ($scope) ->
+# Модуль приложения
+myApp = angular.module('myApp', [])
+myApp.config ($httpProvider) ->
+	$httpProvider.defaults.useXDomain = true
+	delete $httpProvider.defaults.headers.common['X-Requested-With']
+
+# Контроллер приложения
+@IndexCtrl = ($scope, $http, $templateCache) ->
+	# Вызывается при изменеии выходных данных.
+	# Меняет входные и выходные данные в зависимости от изменения выходного параметра.
 	$scope.updateOutputQty = (outputNum, value) ->
 		sum = 0
 		recipeName = $scope.order.recipeName
@@ -18,6 +27,8 @@ class ExtMath extends Math
 			$scope.order.inputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].inputs[i].pct, 2
 		$scope.order.inputsTotal = sum
 
+	# Вызывается при изменеии входных данных.
+	# Меняет входные и выходные данные в зависимости от изменения выходного параметра.
 	$scope.updateInputQty = (inputNum, value) ->
 		sum = 0
 		recipeName = $scope.order.recipeName
@@ -55,6 +66,7 @@ class ExtMath extends Math
 	$scope.outputSpanType = () ->
 		return 12 / $scope.recipes[$scope.order.recipeName].outputs.length
 
+	# Устанавливает начальные значения входным и выходным данным заказа
 	$scope.setUpOrder = () ->
 		recipeName = $scope.order.recipeName
 		inputsLength = $scope.recipes[recipeName].inputs.length
@@ -65,28 +77,59 @@ class ExtMath extends Math
 		if inputsLength != 0
 			$scope.updateInputQty(0, $scope.recipes[recipeName].inputs[0].pct)
 
+	# Вызывается при оформлении заказа
 	$scope.execute = () ->
-		if $scope.order.length != 0
-			$scope.history.push($.extend(true, {}, $scope.order))
+		if $scope.order.recipeName != ""
+			if $scope.order.length != 0
+				$scope.history.push($.extend(true, {}, $scope.order))
+			$scope.setUpOrder()
+			# Здесь должен отправляться запрос на сервер для оформления заказа
 
-	$scope.recipes = 
-		'Замес теста':
-				inputs: [{productName: "Мука", pct:50, onHand:1000},
-						{productName: "Вода", pct:50, onHand:1000}],
-				outputs:[{productName: "Тесто", pct:100, onHand:1000}],
-				name: 'Замес теста'
-		'Просев гипса':
-				inputs: [{productName: "Гипс Казань", pct:10, onHand:1000},
-						{productName: "Гипс Сибирь", pct:40, onHand:1000},
-						{productName: "Гипс Майкоп", pct:50, onHand:1000}],
-				outputs:[{productName: "Гипс Очищенный-1", pct:40, onHand:1000},
-						{productName: "Гипс Очищенный-2", pct:60, onHand:1000}],
-				name: 'Просев гипса'
+	# Выплняет запрос указанного типа на сервер по указанному пути.
+	# Результат содержится в $scope.data
+	$scope.executeQuery = (queryMethod, queryUrl, successCallback, errorCallback) ->
+		$http(
+			method: $scope.method
+			url: $scope.url
+			cache: $templateCache
+		).success(successCallback
+		).error errorCallback 
 
+	# Коллбэки -------------------------------------------
+	$scope.successCallback = (data, status) ->
+		$scope.status = status
+		$scope.data = data
+
+	$scope.errorCallback = (data, status) ->
+		$scope.data = data or "Request failed"
+		$scope.status = status 
+
+	$scope.initializeCallback = (data, status) ->
+		$scope.data = data
+		$scope.recipes = data
+		$scope.status = status
+
+		# Выставляем начальные значения для текущего заказа
+		for key of $scope.recipes
+			$scope.order.recipeName = $scope.recipes[key].name
+			$scope.setUpOrder()
+			break
+	# ----------------------------------------------------
+
+# Собсно сам конструктор контроллера --------------------------------------------------------------
+	# Настройки для запросов
+	$http.defaults.useXDomain = true
+	delete $http.defaults.headers.common['X-Requested-With']
+
+	# Начальные значения типа запроса и адреса запроса
+	$scope.method = 'GET'
+	#$scope.url = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=CP1251'
+	$scope.url = 'http://www.json-generator.com/j/bTDfXqTdaq?indent=4';
+
+	# Текущий заказ
 	$scope.order = {}
+	# История заказов
 	$scope.history = []
 
-	for key of $scope.recipes
-		$scope.order.recipeName = $scope.recipes[key].name
-		$scope.setUpOrder()
-		break
+	$scope.executeQuery $scope.method, $scope.url, $scope.initializeCallback, $scope.errorCallback
+# ------------------------------------------------------------------------------------------------
