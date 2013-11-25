@@ -12,6 +12,30 @@ myApp.config ($httpProvider) ->
 
 # Контроллер приложения
 @IndexCtrl = ($scope, $http, $templateCache) ->
+	$scope.inputStyle = (index) ->
+		onHand = $scope.recipes[$scope.order.recipeName].inputs[index].onHand
+		critical = $scope.recipes[$scope.order.recipeName].inputs[index].critical
+		qty = $scope.order.inputs[index]
+		leftPct = 100 - qty * 100 / onHand
+		if leftPct >= 0
+			if onHand - qty < critical
+				style = 
+					'background-image': 'linear-gradient(0deg, #FFDDDD 0%, #FFDDDD ' + leftPct + '%, #EFEFFF ' + leftPct + '%, #EFEFFF 100%)'
+			else
+				style =
+					'background-image': 'linear-gradient(0deg, #DADAFF 0%, #DADAFF ' + leftPct + '%, #EFEFFF ' + leftPct + '%, #EFEFFF 100%)'
+		else
+			style = {'background': '#FFDDDD'}
+		return style
+
+	$scope.criticalStyle = (index) ->
+		onHand = $scope.recipes[$scope.order.recipeName].inputs[index].onHand
+		critical = $scope.recipes[$scope.order.recipeName].inputs[index].critical
+		leftPct = 100 - critical * 100 / onHand
+		style =
+				'height': leftPct + '%'
+		return style
+
 	# Вызывается при изменеии выходных данных.
 	# Меняет входные и выходные данные в зависимости от изменения выходного параметра.
 	$scope.updateOutputQty = (outputNum, value) ->
@@ -21,11 +45,11 @@ myApp.config ($httpProvider) ->
 		for i in [0...$scope.order.outputs.length]
 			$scope.order.outputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].outputs[i].pct, 2
 			sum += $scope.order.outputs[i]
-		$scope.order.outputsTotal = sum
+		$scope.order.outputsTotal = ExtMath.truncate sum
 		onePct = sum / 100
 		for i in [0...$scope.order.inputs.length]
 			$scope.order.inputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].inputs[i].pct, 2
-		$scope.order.inputsTotal = sum
+		$scope.order.inputsTotal = ExtMath.truncate sum
 
 	# Вызывается при изменеии входных данных.
 	# Меняет входные и выходные данные в зависимости от изменения выходного параметра.
@@ -36,11 +60,11 @@ myApp.config ($httpProvider) ->
 		for i in [0...$scope.order.inputs.length]
 			$scope.order.inputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].inputs[i].pct, 2
 			sum += $scope.order.inputs[i]
-		$scope.order.inputsTotal = sum
+		$scope.order.inputsTotal = ExtMath.truncate sum
 		onePct = sum / 100
 		for i in [0...$scope.order.outputs.length]
 			$scope.order.outputs[i] = ExtMath.truncate  onePct * $scope.recipes[recipeName].outputs[i].pct, 2
-		$scope.order.outputsTotal = sum
+		$scope.order.outputsTotal = ExtMath.truncate sum
 
 	$scope.getOutputQty = (outputNum) ->
 		return $scope.order.outputs[outputNum]
@@ -81,16 +105,29 @@ myApp.config ($httpProvider) ->
 	$scope.execute = () ->
 		if $scope.order.recipeName != ""
 			if $scope.order.length != 0
+				$scope.order.date = new Date()
 				$scope.history.push($.extend(true, {}, $scope.order))
-			$scope.setUpOrder()
 			# Здесь должен отправляться запрос на сервер для оформления заказа
+			sendData =
+				recipeName: $scope.order.recipeName
+				totalCount: $scope.order.inputsTotal
+				inputs: []
+			for i in [0...$scope.order.inputs.length]
+				input = 
+					productName: $scope.recipes[$scope.order.recipeName].inputs[i].productName
+					qount: $scope.order.inputs[i]
+				sendData.inputs.push input
+			#alert(JSON.stringify(sendData))
+			# Сбрасываем значения текущего заказа
+			$scope.setUpOrder()
 
 	# Выплняет запрос указанного типа на сервер по указанному пути.
 	# Результат содержится в $scope.data
-	$scope.executeQuery = (queryMethod, queryUrl, successCallback, errorCallback) ->
+	$scope.executeQuery = (queryMethod, queryUrl, queryData, successCallback, errorCallback) ->
 		$http(
-			method: $scope.method
-			url: $scope.url
+			method: queryMethod
+			url: queryUrl
+			data: queryData
 			cache: $templateCache
 		).success(successCallback
 		).error errorCallback 
@@ -122,14 +159,16 @@ myApp.config ($httpProvider) ->
 	delete $http.defaults.headers.common['X-Requested-With']
 
 	# Начальные значения типа запроса и адреса запроса
-	$scope.method = 'GET'
+	$scope.methods = 
+		get: 'GET'
+		post: 'POST'
 	#$scope.url = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=CP1251'
-	$scope.url = 'http://www.json-generator.com/j/bTDfXqTdaq?indent=4';
+	$scope.url = 'http://www.json-generator.com/j/bTNqmbJBXC?indent=4';
 
 	# Текущий заказ
 	$scope.order = {}
 	# История заказов
 	$scope.history = []
 
-	$scope.executeQuery $scope.method, $scope.url, $scope.initializeCallback, $scope.errorCallback
+	$scope.executeQuery $scope.methods.get, $scope.url, "", $scope.initializeCallback, $scope.errorCallback
 # ------------------------------------------------------------------------------------------------
