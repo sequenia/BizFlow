@@ -143,14 +143,16 @@ myApp.config ($httpProvider) ->
 
 	$scope.initializeCallback = (data, status) ->
 		$scope.data = data
-		$scope.recipes = data
 		$scope.status = status
+		$scope.recipes = data.Reciptes
+		$scope.recipes[""] = 
+			inputs: []
+			outputs: []
+			name: ""
 
 		# Выставляем начальные значения для текущего заказа
-		for key of $scope.recipes
-			$scope.order.recipeName = $scope.recipes[key].name
-			$scope.setUpOrder()
-			break
+		$scope.order.recipeName = ""
+		$scope.setUpOrder()
 	# ----------------------------------------------------
 
 # Собсно сам конструктор контроллера --------------------------------------------------------------
@@ -162,8 +164,8 @@ myApp.config ($httpProvider) ->
 	$scope.methods = 
 		get: 'GET'
 		post: 'POST'
-	#$scope.url = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=CP1251'
-	$scope.url = 'http://www.json-generator.com/j/bTNqmbJBXC?indent=4';
+	$scope.url = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8'
+	#$scope.url = 'http://www.json-generator.com/j/cglUSlCBxK?indent=4';
 
 	# Текущий заказ
 	$scope.order = {}
