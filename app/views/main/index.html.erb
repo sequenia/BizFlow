@@ -51,7 +51,7 @@
               <div class="row-fluid">
                 <div class="span{{ 12 / oldOrder.inputs.length }}" ng-repeat="input in recipes[oldOrder.recipeName].inputs">
                   <div class="history-body">
-                    <h3>{{ input.productName }} ({{ input.pct }}%)</h3>
+                    <h3>{{ input.productName }}</h3>
                     <span >{{ oldOrder.inputs[$index] }}</span> 
                   </div> 
                   <div class="arrow-input"></div> 
@@ -68,7 +68,7 @@
                 <div class="span{{ 12 / oldOrder.outputs.length }}" ng-repeat="output in recipes[oldOrder.recipeName].outputs">
                   <div class="arrow-output"></div> 
                   <div class="history-body">
-                    <h3>{{ output.productName }} ({{ output.pct }}%)</h3>
+                    <h3>{{ output.productName }}</h3>
                     <span >{{ oldOrder.outputs[$index] }}</span> 
                   </div> 
                 </div>
@@ -98,7 +98,7 @@
               <div class="mixer-input" ng-style="inputStyle($index)">
                   <div class="critical-level" ng-style="criticalStyle($index)"></div>
                   <div class="input-content">
-                    <h3>{{ input.productName }} ({{ input.pct }}%)</h3>
+                    <h3>{{ getProductName(input.productName, input.pct, recipes[order.recipeName].itemType) }}</h3>
                     <h3><span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ order.inputs[$index] }}</span></h3>
                   </div>
               </div> 
@@ -119,7 +119,7 @@
             <div class="span{{ outputSpanType() }}" ng-repeat="output in recipes[order.recipeName].outputs">
               <div class="arrow-output"></div>
               <div class="mixer-output">
-                <h3>{{ output.productName }} ({{ output.pct }}%)</h3>  
+                <h3>{{ getProductName(output.productName, output.pct, recipes[order.recipeName].itemType) }}</h3>  
                 <h3><span class="ItemDrag over-max-false" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span></h3>           
               </div>
             </div>
@@ -137,7 +137,7 @@
 
         <div class="span3">
           <div class="row-fluid">
-            <h3>Общий объем производства: {{ order.inputsTotal }} </h3>
+            <h3>Общий объем производства: {{ order.outputsTotal }} </h3>
           </div>                                 
         </div>
       </div> 
