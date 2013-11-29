@@ -4,13 +4,9 @@ class ExtMath extends Math
     scale = scales[precision]
     Math.round(x * scale) / scale
 
-# Модуль приложения
-myApp = angular.module('myApp', [])
-myApp.config ($httpProvider) ->
-	$httpProvider.defaults.useXDomain = true
-	delete $httpProvider.defaults.headers.common['X-Requested-With']
-
-# Контроллер приложения
+# ----------------------------------------------------------------------------------------
+# КОНТРОЛЛЕР ПРИЛОЖЕНИЯ ------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 @IndexCtrl = ($scope, $http, $templateCache) ->
 # Геттеры -------------------------------------------------
 	$scope.getOutputQty = (outputNum) ->
@@ -36,14 +32,15 @@ myApp.config ($httpProvider) ->
 # Сеттеры -------------------------------------------------
 	# Устанавливает начальные значения входным и выходным данным заказа
 	$scope.setUpOrder = () ->
-		recipeName           = $scope.order.recipeName
-		inputsLength         = $scope.recipes[recipeName].inputs.length
-		outputsLength        = $scope.recipes[recipeName].outputs.length
-		$scope.order.inputs  = new Array(inputsLength)
-		$scope.order.outputs = new Array(outputsLength)
+		if $scope.order.recipeName != ""
+			recipeName           = $scope.order.recipeName
+			inputsLength         = $scope.recipes[recipeName].inputs.length
+			outputsLength        = $scope.recipes[recipeName].outputs.length
+			$scope.order.inputs  = new Array(inputsLength)
+			$scope.order.outputs = new Array(outputsLength)
 
-		if inputsLength != 0
-			$scope.updateInputQty(0, $scope.recipes[recipeName].inputs[0].pct)
+			if inputsLength != 0
+				$scope.updateInputQty(0, $scope.recipes[recipeName].inputs[0].pct)
 # ---------------------------------------------------------
 
 # Апдейтеры -----------------------------------------------
@@ -144,29 +141,32 @@ myApp.config ($httpProvider) ->
 
 	$scope.outputSpanType = () ->
 		return 12 / $scope.recipes[$scope.order.recipeName].outputs.length
+
+	$scope.executeButtonDisabled = () ->
+		return $scope.loading || $scope.order.recipeName == ""
 # ---------------------------------------------------------
 
 # Запросы -------------------------------------------------
 	# Вызывается при оформлении заказа
 	$scope.execute = () ->
-		if $scope.order.recipeName != ""
-			# Здесь должен отправляться запрос на сервер для оформления заказа
-			sendData =
-				recipeName: $scope.order.recipeName
-				totalCount: $scope.order.inputsTotal
-				inputs: []
-			for i in [0...$scope.order.inputs.length]
-				input = 
-					productName: $scope.recipes[$scope.order.recipeName].inputs[i].productName
-					qount: $scope.order.inputs[i]
-				sendData.inputs.push input
+		# Здесь должен отправляться запрос на сервер для оформления заказа
+		sendData =
+			recipeName: $scope.order.recipeName
+			totalCount: $scope.order.inputsTotal
+			inputs: []
+		for i in [0...$scope.order.inputs.length]
+			input = 
+				productName: $scope.recipes[$scope.order.recipeName].inputs[i].productName
+				qount: $scope.order.inputs[i]
+			sendData.inputs.push input
 
-			# Отправляем данные на сервер
-			$scope.executeQuery $scope.methods.get, $scope.url, JSON.stringify(sendData), $scope.successCallback, $scope.errorCallback
+		# Отправляем данные на сервер
+		$scope.executeQuery $scope.methods.get, $scope.url, JSON.stringify(sendData), $scope.successCallback, $scope.errorCallback
 
 	# Выплняет запрос указанного типа на сервер по указанному пути.
 	# Результат содержится в $scope.data
 	$scope.executeQuery = (queryMethod, queryUrl, queryData, successCallback, errorCallback) ->
+		$scope.loading = true
 		$http(
 			method: queryMethod
 			url: queryUrl
@@ -192,12 +192,15 @@ myApp.config ($httpProvider) ->
 			for i in [0...recipe.inputs.length]
 				$scope.recipes[name].inputs[i].onHand = $scope.recipes[name].inputs[i].onHand / 2 #recipe.inputs[i].onHand
 
+		$scope.loading = false
+
 
 	$scope.errorCallback = (data, status) ->
 		console.log "Request failed"
 		$scope.data   = data or "Request failed"
 		$scope.status = status 
 
+		$scope.loading = false
 		# Здесь сказать - оп, заказ не удался
 
 	$scope.initializeCallback = (data, status) ->
@@ -206,16 +209,22 @@ myApp.config ($httpProvider) ->
 		$scope.status  = status
 		$scope.recipes = $.extend(true, {}, data.Reciptes)
 
-		$scope.recipes[""] = 
-			inputs: []
-			outputs: []
-			name: ""
+		# Настроить имя заказа
+		if !$scope.order.recipeName
+			for key, name of $scope.recipes
+				$scope.order.recipeName = key
+				break
+
+		# TODO Потом убрать
+		$scope.order.recipeName = ""
 
 		# Выставляем начальные значения для текущего заказа
 		$scope.setUpOrder()
+
+		$scope.loading = false
 # ----------------------------------------------------
 
-# Собсно сам конструктор контроллера --------------------------------------------------------------
+# Собсно сам конструктор контроллера -----------------
 	# Настройки для запросов
 	$http.defaults.useXDomain = true
 	delete $http.defaults.headers.common['X-Requested-With']
@@ -230,7 +239,18 @@ myApp.config ($httpProvider) ->
 	# Текущий заказ
 	$scope.order            = {}
 	$scope.history          = []
-	$scope.order.recipeName = ""
+	$scope.loading          = false
 
 	$scope.executeQuery $scope.methods.get, $scope.url, "", $scope.initializeCallback, $scope.errorCallback
-# ------------------------------------------------------------------------------------------------
+# ----------------------------------------------------
+
+# ----------------------------------------------------------------------------------------
+# МОДУЛЬ ПРИЛОЖЕНИЯ ----------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+angular.module("bizFlow", []).directive "orderSelector", ->
+	template: '<div class="row-fluid mixer-body">' +
+	'<h2>Операция: </h2>' +
+	'<select class="order-select" ng-model="order.recipeName" ng-change="setUpOrder()">' +
+	'<option ng-repeat="recipe in recipes">{{ recipe.name }}</option>' +
+	'</select>' +                        
+	'</div>'
