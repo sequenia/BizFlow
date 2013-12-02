@@ -89,26 +89,37 @@
       <!-- ................................................................................. -->
 
       <!-- ТЕКУЩИЙ ЗАКАЗ ................................................................... -->
-      <div id="orderRow" class="row-fluid">
-        <div class="span9">
+      <div id="orderRow" class="row-fluid" style="margin-top: 1em;">
+        <div class="span12">
 
           <!-- Входные данные -->
           <div class="row-fluid">
             <div class="span{{ inputSpanType() }}" ng-repeat="input in recipes[order.recipeName].inputs">
               <div class="mixer-input" ng-style="inputStyle($index)">
-                  <!-- Подписи -->
-                  <div class="critical-level" ng-style="criticalStyle($index)">
-                    <div class="left-label">{{ input.critical }}</div>
-                  </div>
-                  <div class="left-level" ng-style="leftStyle($index)">
-                    <div class="right-label">{{ getLeftQty($index) }}</div>
-                  </div>
-                  <div class="left-level">
-                    <div class="left-label">{{ input.onHand }}</div>
-                  </div>
-                  <div class="input-content">
-                    <h3>{{ getProductName(input) }}</h3>
-                    <h3><span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ order.inputs[$index] }}</span></h3>
+                  <div class="row-fluid">
+                    <div class="span1">
+                        <div class="critical-level" ng-style="criticalStyle($index)">
+                          <div class="label-container" ng-style="criticalLabelStyle($index)">
+                            <div class="label">{{ input.critical }}</div>
+                          </div>
+                        </div>
+                        <div class="left-level">
+                          <div class="label-container">
+                            <div class="label">{{ input.onHand }}</div>
+                          </div>
+                        </div>
+                        <div class="left-level" ng-style="leftStyle($index)">
+                          <div class="label-container right-label">
+                            <div class="label">{{ getLeftQty($index) }}</div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="span10">
+                      <div class="input-content">
+                        <h4>{{ getProductName(input) }}</h4>
+                        <h3><span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ order.inputs[$index] }}</span></h3>
+                      </div>
+                    </div>
                   </div>
               </div> 
               <div class="arrow-input"></div>
@@ -129,8 +140,12 @@
             <div class="span{{ outputSpanType() }}" ng-repeat="output in recipes[order.recipeName].outputs">
               <div class="arrow-output"></div>
               <div class="mixer-output">
-                <h3>{{ getProductName(output) }}</h3>  
-                <h3><span class="ItemDrag over-max-false" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span></h3>        
+                <div class="row-fluid">
+                  <div class="span12">
+                    <h4>{{ getProductName(output) }}</h4>  
+                    <h3><span class="ItemDrag over-max-false" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span></h3>  
+                  </div>
+                </div>      
               </div>
             </div>
           </div>
@@ -145,11 +160,6 @@
           </div>
         </div>
 
-        <div class="span3">
-          <div class="row-fluid">
-            <h3>Общий объем производства: {{ order.outputsTotal }} </h3>
-          </div>                                 
-        </div>
       </div> 
       <!-- ................................................................................. -->
 

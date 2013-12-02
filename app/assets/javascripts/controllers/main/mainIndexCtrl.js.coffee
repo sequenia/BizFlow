@@ -29,7 +29,7 @@ class ExtMath extends Math
 			else return item.productName
 
 	$scope.getLeftQty = (index) ->
-		return ExtMath.truncate($scope.recipes[$scope.order.recipeName].inputs[index].onHand - $scope.order.inputs[index])
+		return ExtMath.truncate($scope.order.recipeInputs[index].onHand - $scope.order.inputs[index])
 # ---------------------------------------------------------
 
 # Сеттеры -------------------------------------------------
@@ -41,6 +41,8 @@ class ExtMath extends Math
 			outputsLength        = $scope.recipes[recipeName].outputs.length
 			$scope.order.inputs  = new Array(inputsLength)
 			$scope.order.outputs = new Array(outputsLength)
+			$scope.order.recipeInputs  = $scope.recipes[recipeName].inputs
+			$scope.order.recipeOutputs = $scope.recipes[recipeName].outputs
 
 			if inputsLength != 0
 				$scope.updateInputQty(0, $scope.recipes[recipeName].inputs[0].pct)
@@ -118,8 +120,8 @@ class ExtMath extends Math
 
 # Стили ---------------------------------------------------
 	$scope.inputStyle = (index) ->
-		onHand   = $scope.recipes[$scope.order.recipeName].inputs[index].onHand
-		critical = $scope.recipes[$scope.order.recipeName].inputs[index].critical
+		onHand   = $scope.order.recipeInputs[index].onHand
+		critical = $scope.order.recipeInputs[index].critical
 		qty      = $scope.order.inputs[index]
 		leftPct  = 100 - qty * 100 / onHand
 		if leftPct >= 0
@@ -132,26 +134,32 @@ class ExtMath extends Math
 		return style
 
 	$scope.criticalStyle = (index) ->
-		onHand   = $scope.recipes[$scope.order.recipeName].inputs[index].onHand
-		critical = $scope.recipes[$scope.order.recipeName].inputs[index].critical
+		onHand   = $scope.order.recipeInputs[index].onHand
+		critical = $scope.order.recipeInputs[index].critical
 		leftPct  = 100 - critical * 100 / onHand
 		style    =
 				'height': leftPct + '%'
 		return style
 
+	$scope.criticalLabelStyle = (index) ->
+		onHand   = $scope.order.recipeInputs[index].onHand
+		critical = $scope.order.recipeInputs[index].critical
+		if critical > onHand * 0.85 then style = {'bottom': '-1.3em'}
+		else style = ""
+		return style
+
 	$scope.leftStyle = (index) ->
-		onHand   = $scope.recipes[$scope.order.recipeName].inputs[index].onHand
+		onHand   = $scope.order.recipeInputs[index].onHand
 		left     = onHand - $scope.order.inputs[index]
 		leftPct  = (100 - left * 100 / onHand).limit(0, 100)
-		style    =
-				'height': leftPct + '%'
+		style    = {'height': leftPct + '%'}
 		return style
 
 	$scope.inputSpanType = () ->
-		return 12 / $scope.recipes[$scope.order.recipeName].inputs.length
+		return 12 / $scope.order.recipeInputs.length
 
 	$scope.outputSpanType = () ->
-		return 12 / $scope.recipes[$scope.order.recipeName].outputs.length
+		return 12 / $scope.order.recipeOutputs.length
 
 	$scope.executeButtonDisabled = () ->
 		return $scope.loading || $scope.order.recipeName == ""
@@ -168,7 +176,7 @@ class ExtMath extends Math
 				inputs: []
 		for i in [0...$scope.order.inputs.length]
 			input = 
-				name: $scope.recipes[$scope.order.recipeName].inputs[i].productName
+				name: $scope.order.recipeInputs[i].productName
 				count: $scope.order.inputs[i]
 			sendData.Order.inputs.push input
 
@@ -197,15 +205,16 @@ class ExtMath extends Math
 		#alert JSON.stringify(data)
 
 		$scope.order.date = new Date()
+		if $scope.history.length == $scope.historyLength then $scope.history.splice(0, 1)
 		$scope.history.push($.extend(true, {}, $scope.order))
 
 		$scope.setUpOrder()
 
 		# Здесь сделать выставление новых остатков
-		#for name, recipe of $scope.recipes
-		#	for i in [0...recipe.inputs.length]
-		#		recipe.inputs[i].onHand = recipe.inputs[i].onHand / 2 #recipe.inputs[i].onHand
-		#		recipe.inputs[i].critical += 30
+		for name, recipe of $scope.recipes
+			for i in [0...recipe.inputs.length]
+				#recipe.inputs[i].onHand = recipe.inputs[i].onHand / 2 #recipe.inputs[i].onHand
+				recipe.inputs[i].critical += 30
 
 		$scope.loading = false
 
@@ -255,6 +264,7 @@ class ExtMath extends Math
 	$scope.order            = {}
 	$scope.history          = []
 	$scope.loading          = false
+	$scope.historyLength    = 5
 
 	$scope.executeQuery $scope.methods.get, $scope.url, "", $scope.initializeCallback, $scope.errorCallback
 # ----------------------------------------------------
