@@ -68,6 +68,7 @@ body {
 	border: 1px solid #C2C2C2;
 	background-color: #F5F5F5; 
 	-khtml-border-radius:10px;
+	margin-bottom: 1em;
 }
 
 .arrow-input {
@@ -122,4 +123,20 @@ body {
 	position: absolute; 
 	width: 100%; height: 100%; 
 	border-bottom: 1px dashed #9C9C9C;
+}
+
+.left-level {
+	position: absolute; 
+	width: 100%; height: 0%;
+}
+
+.left-label {
+	position: absolute;
+	bottom: 0;
+}
+
+.right-label {
+	position: absolute;
+	bottom: 0;
+	right: 0;
 }

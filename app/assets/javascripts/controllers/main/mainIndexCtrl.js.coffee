@@ -21,12 +21,15 @@ class ExtMath extends Math
 			when "outputs" then	return $scope.getOutputQty(itemNum)
 			else return 0
 
-	$scope.getProductName = (productName, pct, itemType) ->
-		switch itemType
-			when 20 then return productName + ' (' + pct + '%)'
-			when 30 then return productName + ' (' + pct + '%)'
-			when 40 then return productName
-			else return productName
+	$scope.getProductName = (item) ->
+		switch $scope.recipes[$scope.order.recipeName].itemType
+			when 20 then return item.productName + ' (' + item.pct + '%)'
+			when 30 then return item.productName + ' (' + item.pct + '%)'
+			when 40 then return item.productName
+			else return item.productName
+
+	$scope.getLeftQty = (index) ->
+		return ExtMath.truncate($scope.recipes[$scope.order.recipeName].inputs[index].onHand - $scope.order.inputs[index])
 # ---------------------------------------------------------
 
 # Сеттеры -------------------------------------------------
@@ -136,6 +139,14 @@ class ExtMath extends Math
 				'height': leftPct + '%'
 		return style
 
+	$scope.leftStyle = (index) ->
+		onHand   = $scope.recipes[$scope.order.recipeName].inputs[index].onHand
+		left     = onHand - $scope.order.inputs[index]
+		leftPct  = (100 - left * 100 / onHand).limit(0, 100)
+		style    =
+				'height': leftPct + '%'
+		return style
+
 	$scope.inputSpanType = () ->
 		return 12 / $scope.recipes[$scope.order.recipeName].inputs.length
 
@@ -151,17 +162,18 @@ class ExtMath extends Math
 	$scope.execute = () ->
 		# Здесь должен отправляться запрос на сервер для оформления заказа
 		sendData =
-			recipeName: $scope.order.recipeName
-			totalCount: $scope.order.inputsTotal
-			inputs: []
+			Order:
+				recipeName: $scope.order.recipeName
+				totalCount: $scope.order.inputsTotal
+				inputs: []
 		for i in [0...$scope.order.inputs.length]
 			input = 
-				productName: $scope.recipes[$scope.order.recipeName].inputs[i].productName
-				qount: $scope.order.inputs[i]
-			sendData.inputs.push input
+				name: $scope.recipes[$scope.order.recipeName].inputs[i].productName
+				count: $scope.order.inputs[i]
+			sendData.Order.inputs.push input
 
 		# Отправляем данные на сервер
-		$scope.executeQuery $scope.methods.get, $scope.url, JSON.stringify(sendData), $scope.successCallback, $scope.errorCallback
+		$scope.executeQuery $scope.methods.post, $scope.url, JSON.stringify(sendData), $scope.successCallback, $scope.errorCallback
 
 	# Выплняет запрос указанного типа на сервер по указанному пути.
 	# Результат содержится в $scope.data
@@ -182,15 +194,18 @@ class ExtMath extends Math
 		$scope.status = status
 		$scope.data   = data
 
+		#alert JSON.stringify(data)
+
 		$scope.order.date = new Date()
 		$scope.history.push($.extend(true, {}, $scope.order))
 
 		$scope.setUpOrder()
 
 		# Здесь сделать выставление новых остатков
-		for name, recipe of data.Reciptes
-			for i in [0...recipe.inputs.length]
-				$scope.recipes[name].inputs[i].onHand = $scope.recipes[name].inputs[i].onHand / 2 #recipe.inputs[i].onHand
+		#for name, recipe of $scope.recipes
+		#	for i in [0...recipe.inputs.length]
+		#		recipe.inputs[i].onHand = recipe.inputs[i].onHand / 2 #recipe.inputs[i].onHand
+		#		recipe.inputs[i].critical += 30
 
 		$scope.loading = false
 
