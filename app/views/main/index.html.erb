@@ -96,31 +96,28 @@
           <div class="row-fluid">
             <div class="span{{ inputSpanType() }}" ng-repeat="input in recipes[order.recipeName].inputs">
               <div class="mixer-input" ng-style="inputStyle($index)">
-                  <div class="row-fluid">
-                    <div class="span1">
-                        <div class="critical-level" ng-style="criticalStyle($index)">
-                          <div class="label-container" ng-style="criticalLabelStyle($index)">
-                            <div class="label">{{ input.critical }}</div>
-                          </div>
-                        </div>
-                        <div class="left-level">
-                          <div class="label-container">
-                            <div class="label">{{ input.onHand }}</div>
-                          </div>
-                        </div>
-                        <div class="left-level" ng-style="leftStyle($index)">
-                          <div class="label-container right-label">
-                            <div class="label">{{ getLeftQty($index) }}</div>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="span10">
-                      <div class="input-content">
-                        <h4>{{ getProductName(input) }}</h4>
-                        <h3><span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}" >{{ order.inputs[$index] }}</span></h3>
-                      </div>
-                    </div>
+                <div class="critical-level" ng-style="criticalStyle($index)">
+                  <div class="label-container" ng-style="criticalLabelStyle($index)">
+                    <div class="triangle-left"></div>
+                    <div class="label left-label-margin">{{ input.critical }}</div>
                   </div>
+                </div>
+                <div class="on-hand-level">
+                  <div class="label-container">
+                    <div class="triangle-left"></div>
+                    <div class="label left-label-margin">{{ input.onHand }}</div>
+                  </div>
+                </div>
+                <div class="left-level" ng-style="leftStyle($index)">
+                  <div class="label-container right-label">
+                    <div class="triangle-right"></div>
+                    <div class="label right-label-margin">{{ getLeftQty($index) }}</div>
+                  </div>
+                </div>
+                <div class="input-content">
+                  <h4>{{ getProductName(input) }}</h4>
+                  <h3><span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}">{{ order.inputs[$index] }}</span></h3>
+                </div>
               </div> 
               <div class="arrow-input"></div>
             </div>
@@ -140,12 +137,10 @@
             <div class="span{{ outputSpanType() }}" ng-repeat="output in recipes[order.recipeName].outputs">
               <div class="arrow-output"></div>
               <div class="mixer-output">
-                <div class="row-fluid">
-                  <div class="span12">
-                    <h4>{{ getProductName(output) }}</h4>  
-                    <h3><span class="ItemDrag over-max-false" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span></h3>  
-                  </div>
-                </div>      
+                <div class="output-content">
+                  <h4>{{ getProductName(output) }}</h4>  
+                  <h3><span class="ItemDrag over-max-false" collectionName="outputs" itemNum = {{$index}} data-min="0" data-max="{{ output.onHand }}">{{ order.outputs[$index] }}</span></h3>   
+                </div>
               </div>
             </div>
           </div>

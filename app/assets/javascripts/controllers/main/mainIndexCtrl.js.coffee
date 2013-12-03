@@ -102,6 +102,7 @@ class ExtMath extends Math
 		for i in [0...$scope.order.inputs.length]
 			$scope.order.inputs[i] = trunc  onePiece * recipe.inputs[i].pct, 2
 			sum += $scope.order.inputs[i]
+			console.log $scope.order.inputs[i]
 
 		$scope.order.inputsTotal = sum
 		sum = 0
@@ -211,10 +212,10 @@ class ExtMath extends Math
 		$scope.setUpOrder()
 
 		# Здесь сделать выставление новых остатков
-		for name, recipe of $scope.recipes
-			for i in [0...recipe.inputs.length]
-				#recipe.inputs[i].onHand = recipe.inputs[i].onHand / 2 #recipe.inputs[i].onHand
-				recipe.inputs[i].critical += 30
+		#for name, recipe of $scope.recipes
+		#	for i in [0...recipe.inputs.length]
+		#		recipe.inputs[i].onHand = recipe.inputs[i].onHand / 2 #recipe.inputs[i].onHand
+		#		recipe.inputs[i].critical += 30
 
 		$scope.loading = false
 

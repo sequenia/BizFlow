@@ -66,6 +66,7 @@
       this.isDragging = true;
       isAnyAdjustableNumberDragging = true;
       this.updateRolloverEffects();
+      $('.label-container').css('opacity', '0.8');
     },
     
     touchDidMove: function (touches) 
@@ -88,6 +89,7 @@
       this.isDragging = false;
       isAnyAdjustableNumberDragging = false;
       this.updateRolloverEffects();
+      $('.label-container').css('opacity', '0.3');
     }
   };
 
