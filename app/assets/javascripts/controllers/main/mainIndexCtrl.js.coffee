@@ -137,16 +137,11 @@ class ExtMath extends Math
 	$scope.criticalStyle = (index) ->
 		onHand   = $scope.order.recipeInputs[index].onHand
 		critical = $scope.order.recipeInputs[index].critical
-		leftPct  = 100 - critical * 100 / onHand
-		style    =
-				'height': leftPct + '%'
-		return style
-
-	$scope.criticalLabelStyle = (index) ->
-		onHand   = $scope.order.recipeInputs[index].onHand
-		critical = $scope.order.recipeInputs[index].critical
-		if critical > onHand * 0.85 then style = {'bottom': '-1.3em'}
-		else style = ""
+		if critical == 0 then style = {'opacity': '0'}
+		else
+			leftPct  = 100 - critical * 100 / onHand
+			style    =
+					'height': leftPct + '%'
 		return style
 
 	$scope.leftStyle = (index) ->
@@ -242,6 +237,11 @@ class ExtMath extends Math
 
 		# TODO Потом убрать
 		$scope.order.recipeName = ""
+
+		# TODO Грузить с сервера
+		for name, recipe of $scope.recipes
+			for i in [0...recipe.inputs.length]
+				recipe.inputs[i].unit = "Кг"
 
 		# Выставляем начальные значения для текущего заказа
 		$scope.setUpOrder()

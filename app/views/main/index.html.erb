@@ -97,15 +97,16 @@
             <div class="span{{ inputSpanType() }}" ng-repeat="input in recipes[order.recipeName].inputs">
               <div class="mixer-input" ng-style="inputStyle($index)">
                 <div class="critical-level" ng-style="criticalStyle($index)">
-                  <div class="label-container" ng-style="criticalLabelStyle($index)">
-                    <div class="triangle-left"></div>
-                    <div class="label left-label-margin">{{ input.critical }}</div>
+                  <div class="label-container">
+                    <div class="critical-dash"></div>
+                    <div class="grade-label critical-color"><b>{{ input.critical }}</b></div>
                   </div>
                 </div>
                 <div class="on-hand-level">
                   <div class="label-container">
-                    <div class="triangle-left"></div>
-                    <div class="label left-label-margin">{{ input.onHand }}</div>
+                    <div class="unit"><b>{{ input.unit }}</b></div>
+                    <div class="grade-dash"></div>
+                    <div class="grade-label"><b>{{ input.onHand }}</b></div>
                   </div>
                 </div>
                 <div class="left-level" ng-style="leftStyle($index)">
