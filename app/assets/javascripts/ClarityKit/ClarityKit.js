@@ -9,6 +9,9 @@
         this.element = element;
         this.clarity = clarity;
         this.variable = variable;
+        this.clickTime = new Date();
+        this.delta = 0;
+        this.textInput = undefined;
 
         this.min = (options.min !== undefined) ? parseFloat(options.min) : 1;
         this.max = (options.max !== undefined) ? parseFloat(options.max) : 10;
@@ -50,6 +53,44 @@
       else { body.removeClass("CKCursorDragHorizontal"); }
     },
 
+    createTextInput: function()
+    {
+      var _this = this;
+      var collectionName = this.element.getAttribute("collectionName"); 
+      var itemNum = this.element.getAttribute("itemNum");
+
+      this.element.style.display = 'none';
+      this.textInput = document.createElement('input');
+      this.textInput.type = "text";
+      this.textInput.className = "input-small hand-input";
+      this.textInput.value = angular.element(this.element).scope().getItemQty(collectionName, itemNum);
+
+      var deleteElement = function(namespace, collectionName, itemNum)
+      {
+        scope = angular.element(namespace.element).scope();
+        scope.$apply(function() {
+          scope.updateItemQty(collectionName, itemNum, Math.abs(parseInt(namespace.textInput.value) || 0));
+        });
+
+        namespace.element.parentNode.removeChild(namespace.textInput);
+        namespace.element.style.display = '';
+        namespace.textInput = undefined;
+      };
+
+      this.textInput.addEventListener("blur", function(){deleteElement(_this, collectionName, itemNum);}, false);
+      this.textInput.addEventListener("keypress", 
+      function(e)
+      { 
+        if(e.keyCode === 13)
+        {
+          deleteElement(_this, collectionName, itemNum);
+        }
+      }, 
+      false);
+      this.element.parentNode.appendChild(this.textInput);
+      this.textInput.focus();
+    },
+
     // drag
     
     initializeDrag: function () 
@@ -60,6 +101,7 @@
     
     touchDidGoDown: function (touches) 
     {
+      $('.hand-input').blur();
       var collectionName = this.element.getAttribute("collectionName"); 
       var itemNum = this.element.getAttribute("itemNum");
       this.valueAtMouseDown = angular.element(this.element).scope().getItemQty(collectionName, itemNum);
@@ -74,13 +116,11 @@
       var value = this.valueAtMouseDown + touches.translation.x / 5 * this.step;
       var collectionName = this.element.getAttribute("collectionName");
       var itemNum = this.element.getAttribute("itemNum");
-      console.log(itemNum);
       value = ((value / this.step).round() * this.step);
       if(value < this.min) value = this.min;
-      console.log("move for " + this.element);
       scope = angular.element(this.element).scope();
       scope.$apply(function() {
-        scope.updateItemQty(collectionName, itemNum, value);        
+        scope.updateItemQty(collectionName, itemNum, value);
       }); 
     },
     
@@ -90,6 +130,16 @@
       isAnyAdjustableNumberDragging = false;
       this.updateRolloverEffects();
       $('.label-container').css('opacity', '0.3');
+
+      var currentTime = new Date();
+      this.delta = currentTime - this.clickTime;
+      this.clickTime = currentTime;
+
+      if(this.delta < 200) 
+      {
+        console.log('double-click');
+        !this.textInput && this.createTextInput();
+      }
     }
   };
 

@@ -27,7 +27,7 @@
     <div id = "production" class="container-fluid text-center" ng-controller="IndexCtrl">
 
       <!-- Меню -->
-      <div class="navbar navbar-fixed-top">
+      <div class="navbar">
         <div class="navbar-inner">
           <span class="brand"></span>
           <ul class="nav">
@@ -117,7 +117,11 @@
                 </div>
                 <div class="input-content">
                   <h4>{{ getProductName(input) }}</h4>
-                  <h3><span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}">{{ order.inputs[$index] }}</span></h3>
+                  <h3>
+                    <div>
+                      <span class="ItemDrag over-max-{{ order.inputs[$index] > input.onHand }}" collectionName="inputs" itemNum = {{$index}} data-min="0" data-max="{{ input.onHand }}">{{ order.inputs[$index] }}</span>
+                    </div>
+                  </h3>
                 </div>
               </div> 
               <div class="arrow-input"></div>
