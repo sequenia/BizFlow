@@ -69,7 +69,7 @@
       {
         scope = angular.element(namespace.element).scope();
         scope.$apply(function() {
-          scope.updateItemQty(collectionName, itemNum, Math.abs(parseInt(namespace.textInput.value) || 0));
+          scope.updateItemQty(collectionName, itemNum, Math.abs(parseFloat(namespace.textInput.value) || 0));
         });
 
         namespace.element.parentNode.removeChild(namespace.textInput);

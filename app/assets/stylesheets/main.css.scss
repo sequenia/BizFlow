@@ -9,6 +9,16 @@ body {
     background-repeat:no-repeat;
 }
 
+input[type="text"] {
+    font-size: 1em;
+    color: #00c;
+    text-align: center;
+    font-family: inherit;
+    font-weight: bold;
+    height: 1.2em;
+    width: 50%;
+}
+
 .center {
 	text-align: center;
 }
