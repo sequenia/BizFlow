@@ -23,7 +23,7 @@
   });
   </script>
 
-  <body ng-app="bizFlow">
+  <body ng-app="bizflow">
     <div id = "production" class="container-fluid text-center" ng-controller="IndexCtrl">
 
       <!-- Меню -->
@@ -133,9 +133,8 @@
             <h2>Операция: </h2>
             <select class="order-select" ng-model="order.recipeName" ng-change="setUpOrder()">
               <option ng-repeat="recipe in recipes">{{ recipe.name }}</option>
-            </select>                        
+            </select>
           </div>
-          <!--<div order-selector></div>-->
 
           <!-- Выходные данные -->
           <div class="row-fluid">

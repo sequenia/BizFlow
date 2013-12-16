@@ -3,7 +3,7 @@ class ExtMath extends Math
     scales = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000]
     scale = scales[precision]
     Math.round(x * scale) / scale
-
+    
 # ----------------------------------------------------------------------------------------
 # КОНТРОЛЛЕР ПРИЛОЖЕНИЯ ------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------
@@ -265,17 +265,7 @@ class ExtMath extends Math
     $scope.history          = []
     $scope.loading          = false
     $scope.historyLength    = 5
+    $scope.word = "kaka"
 
     $scope.executeQuery $scope.methods.get, $scope.url, "", $scope.initializeCallback, $scope.errorCallback
 # ----------------------------------------------------
-
-# ----------------------------------------------------------------------------------------
-# МОДУЛЬ ПРИЛОЖЕНИЯ ----------------------------------------------------------------------
-# ----------------------------------------------------------------------------------------
-angular.module("bizFlow", []).directive "orderSelector", ->
-    template: '<div class="row-fluid mixer-body">' +
-    '<h2>Операция: </h2>' +
-    '<select class="order-select" ng-model="order.recipeName" ng-change="setUpOrder()">' +
-    '<option ng-repeat="recipe in recipes">{{ recipe.name }}</option>' +
-    '</select>' +                        
-    '</div>'
