@@ -58,6 +58,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 
     function successCallback(data, status)
     {
+    	console.log("Request was successful");
         var old = 
 		{
 			'inputs':     $.extend(true, {}, $scope.cylinder.inputs),

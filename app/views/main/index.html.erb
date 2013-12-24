@@ -18,8 +18,8 @@
     <div class='span10'>
         <div class='history'>
             <div class='row-fluid'>
-                <div ng-repeat='input in old.inputs' class='history-body span{{inputHistorySpanType(old.recipeName)}}'>
-                    <h4>{{input.label}}</h4>
+                <div ng-repeat='(label, input) in old.inputs' class='history-body span{{inputHistorySpanType(old.recipeName)}}'>
+                    <h4>{{label}}</h4>
                     <h4>{{input.qty}}</h4>
                 </div>
             </div>
@@ -29,8 +29,8 @@
             </div>
 
             <div class='row-fluid'>
-                <div ng-repeat='output in old.outputs' class='history-body span{{outputHistorySpanType(old.recipeName)}}'>
-                    <h4>{{output.label}}</h4>
+                <div ng-repeat='(label, output) in old.outputs' class='history-body span{{outputHistorySpanType(old.recipeName)}}'>
+                    <h4>{{label}}</h4>
                     <h4>{{output.qty}}</h4>
                 </div>
             </div>
