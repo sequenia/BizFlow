@@ -60,19 +60,18 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     function successCallback(data, status)
     {
     	console.log("Request was successful");
-    	//console.log(data);
         var old = 
 		{
 			'inputs':     $.extend(true, {}, $scope.cylinder.inputs),
 			'outputs':    $.extend(true, {}, $scope.cylinder.outputs),
 			'recipeName': $scope.recipeName,
 			'date':       (new Date()).toLocaleString(),
-			'result':     data
+			'result':     data.productionResult
 		};
 
 		$scope.history.push(old);
 
-        // Здесь сделать выставление новых остатков
+        $scope.recipes = data.newReciptes.Reciptes;
 
         $scope.loading = false;
 
