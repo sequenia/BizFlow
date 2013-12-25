@@ -15,7 +15,7 @@
     </div>
 
     <div class='row-fluid' ng-repeat='old in history | filter:query'>
-    <div class='span10'>
+    <div class='span6'>
         <div class='history'>
             <div class='row-fluid'>
                 <div ng-repeat='(label, input) in old.inputs' class='history-body span{{inputHistorySpanType(old.recipeName)}}'>
@@ -36,15 +36,15 @@
             </div>
         </div>
     </div>
-    <div class='span2 history'>
-        <h4>Дата: {{old.date}}</h4>
+    <div class='span6 history'>
+        <div history-result date='{{old.date}}' result='{{old.result}}'></div>
     </div>
     </div>
 
     <div class='row-fluid' id='inputs'>
         <div ng-repeat='input in recipes[recipeName].inputs' class='span{{inputSpanType()}}'>
             <div class='cylinder-labels-oum'>{{input.UOM}}</div>
-            <div cylinder type='input' label='{{getInputName(input)}}' proportion='{{input.pct}}' having='{{input.onHand}}' critical='{{input.critical}}'></div>
+            <div cylinder type='input' label='{{getInputName(input)}}' proportion='{{input.pct}}' having='{{input.onHand}}' critical='{{input.critical}}' accuracy="{{input.accuracy}}" rounding="{{input.rounding}}"></div>
             <div class='arrow-input'></div>
         </div>
     </div>
@@ -52,7 +52,7 @@
     <div class='row-fluid mixer-body'>
         <div class='center-div'>
             <h2><b>Операция:</b></h2>
-            <select ng-model='recipeName' ng-change='changeRounding()'>
+            <select ng-model='recipeName'>
                 <option ng-repeat='recipe in recipes'>{{recipe.name}}</option>
             </select>
         </div>
@@ -62,7 +62,7 @@
         <div ng-repeat='output in recipes[recipeName].outputs' class='span{{outputSpanType()}}'>
             <div class='arrow-output'></div>
             <div class='cylinder-labels-oum'>{{output.UOM}}</div>
-            <div cylinder type='output' label='{{getOutputName(output)}}' proportion='{{output.pct}}'></div>
+            <div cylinder type='output' label='{{getOutputName(output)}}' proportion='{{output.pct}}' accuracy="{{output.accuracy}}" rounding="{{output.rounding}}"></div>
         </div>
     </div>
 

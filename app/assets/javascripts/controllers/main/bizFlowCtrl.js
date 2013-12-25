@@ -5,6 +5,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	$http.defaults.useXDomain = true;
     delete $http.defaults.headers.common['X-Requested-With'];
     $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    $http.defaults.headers.post['Accept'] = 'text/json';
     $scope.methods  = 
     {
         get:  'GET',
@@ -59,12 +60,14 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     function successCallback(data, status)
     {
     	console.log("Request was successful");
+    	//console.log(data);
         var old = 
 		{
 			'inputs':     $.extend(true, {}, $scope.cylinder.inputs),
 			'outputs':    $.extend(true, {}, $scope.cylinder.outputs),
 			'recipeName': $scope.recipeName,
-			'date':       (new Date()).toLocaleString()
+			'date':       (new Date()).toLocaleString(),
+			'result':     data
 		};
 
 		$scope.history.push(old);
@@ -106,6 +109,8 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	{
         var sendData =
         {
+        	dataAreaId: 'strd',
+        	encoding: 'UTF-8',
             Order:
             {
                 recipeName: $scope.recipeName,
@@ -153,20 +158,22 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 		if(type < 3) type = 3;
 		return type; 
 	};
-
-	$scope.changeRounding = function()
-	{
-		if($scope.recipes[$scope.recipeName].itemType == 40)
-		{
-			$scope.cylinder.setRounding('up');
-		}
-		else
-		{
-			$scope.cylinder.setRounding('none');
-		}
-	};
 };
 
 app.controller("bizFlowCtrl", bizFlowCtrl);
 
 app.directive('cylinder', CylinderDirective);
+
+app.directive('historyResult', HistoryResultDirective);
+
+function HistoryResultDirective($compile) 
+{       
+    return {
+        link: function($scope, element, attrs) {
+        	var tpl = $compile('<h4>Дата: ' + attrs.date + '</h4>')($scope);
+            $(element).append(tpl);
+            tpl = $compile('<h4>' + attrs.result + '</h4>')($scope);
+            $(element).append(tpl);
+        }
+    }
+}

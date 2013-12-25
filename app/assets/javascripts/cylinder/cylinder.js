@@ -6,44 +6,22 @@ function truncate (x, precision)
     return Math.round(x * scale) / scale;
 }
 
+function roundingTruncate (x, precision, rounding)
+{
+	precision = precision || 0;
+	rounding = rounding || 'round';
+    var scales = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000];
+    var scale = scales[precision];
+    return Math[rounding](x * scale) / scale;
+}
+
 function CylinderItems(options)
 {
 	var cylinder          = this;
-	var roundingMethod    = undefined;
-	var rounding          = 'none';
 
 	cylinder.elemsCounter = 1;
 	cylinder.inputs       = {};
 	cylinder.outputs      = {};
-
-	if(options)
-	{
-		rounding = (options.rounding === undefined) ? 'none' : rounding;
-	}
-
-	cylinder.setRounding = function(r)
-	{
-		if(r)
-		{
-			switch(r)
-			{
-				case 'none':
-					roundingMethod = truncate;
-					break;
-				case 'up':
-					roundingMethod = Math.ceil;
-					break;
-				case 'down':
-					roundingMethod = Math.floor;
-					break;
-				default:
-					roundingMethod = truncate;
-					break;
-			}
-		}
-	};
-
-	cylinder.setRounding(rounding);
 
 	cylinder.getInputQty = function(label)
 	{
@@ -68,13 +46,13 @@ function CylinderItems(options)
 
 		for(var key in cylinder.inputs)
 		{
-			cylinder.inputs[key].qty = roundingMethod(onePiece * cylinder.inputs[key].proportion, 1);
+			cylinder.inputs[key].qty = roundingTruncate(onePiece * cylinder.inputs[key].proportion, cylinder.inputs[key].accuracy, cylinder.inputs[key].rounding);
 			sum += cylinder.inputs[key].qty; 
 		}
 
 		for(var key in cylinder.outputs)
 		{
-			cylinder.outputs[key].qty = roundingMethod(onePiece * cylinder.outputs[key].proportion, 1);
+			cylinder.outputs[key].qty = roundingTruncate(onePiece * cylinder.outputs[key].proportion, cylinder.outputs[key].accuracy, cylinder.outputs[key].rounding);
 		}
 	};
 
@@ -86,13 +64,13 @@ function CylinderItems(options)
 
 		for(var key in cylinder.outputs)
 		{
-			cylinder.outputs[key].qty = roundingMethod(onePiece * cylinder.outputs[key].proportion, 1);
+			cylinder.outputs[key].qty = roundingTruncate(onePiece * cylinder.outputs[key].proportion, cylinder.outputs[key].accuracy, cylinder.outputs[key].rounding);
 			sum += cylinder.outputs[key].qty;
 		}
 
 		for(var key in cylinder.inputs)
 		{
-			cylinder.inputs[key].qty = roundingMethod(onePiece * cylinder.inputs[key].proportion, 1);
+			cylinder.inputs[key].qty = roundingTruncate(onePiece * cylinder.inputs[key].proportion, cylinder.inputs[key].accuracy, cylinder.inputs[key].rounding);
 		}
 	};
 
@@ -139,9 +117,11 @@ function CylinderDirective($compile)
         		// Берем атрибуты
         		var label      = attrs.label || ('Элемент ' + $scope.cylinder.elemsCounter);
         		var type       = attrs.type  || 'input';
+        		var rounding   = attrs.rounding || 'round';
 
         		var proportion = (attrs.proportion === undefined) ? 1.0 : parseFloat(attrs.proportion); 
         		var step       = (attrs.step       === undefined) ? 1.0 : parseFloat(attrs.step);
+        		var accuracy   = (attrs.accuracy   === undefined) ? 2 : parseInt(attrs.accuracy);
         		var min        = (attrs.min        === undefined) ? 0.0 : parseFloat(attrs.min);
         		var max        = (attrs.max        === undefined) ? undefined : parseFloat(attrs.max);
         		var having     = (attrs.having     === undefined) ? undefined : parseFloat(attrs.having);
@@ -149,10 +129,12 @@ function CylinderDirective($compile)
 
         		if(isNaN(having))   having = undefined;
         		if(isNaN(critical)) critical = undefined;
+        		if(isNaN(accuracy)) accuracy = 2;
 
         		if(!(type == 'input' || type == 'output')) type = 'input';
         		if(proportion <= 0) proportion = 1.0;
         		if(step <= 0) step = 1.0;
+        		if(accuracy < 0) accuracy = 0;
         		if(min < 0) min = 0;
         		if(having < 0) having = undefined;
         		if(max !== undefined && max < min) max = min + 1.0;
@@ -173,6 +155,8 @@ function CylinderDirective($compile)
         		{
                 	qty:        proportion,
                 	proportion: proportion,
+                	accuracy:   accuracy,
+                	rounding:   rounding,
                 	having:     having,
                 	critical:   critical
         		};
