@@ -157,8 +157,8 @@ function CylinderDirective($compile)
                 	proportion: proportion,
                 	accuracy:   accuracy,
                 	rounding:   rounding,
-                	having:     having,
-                	critical:   critical
+                	having:     truncate(having, 2),
+                	critical:   truncate(critical, 2)
         		};
 
         		var tpl;

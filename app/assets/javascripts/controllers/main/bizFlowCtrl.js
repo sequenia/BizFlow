@@ -157,22 +157,50 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 		if(type < 3) type = 3;
 		return type; 
 	};
+
+	$scope.orderSuccess = function(old)
+	{
+		return (old.result.search('успешно') == -1) ? false : true;
+	};
 };
 
 app.controller("bizFlowCtrl", bizFlowCtrl);
 
 app.directive('cylinder', CylinderDirective);
-
 app.directive('historyResult', HistoryResultDirective);
+app.directive('historyElement', HistoryElementDirective);
 
 function HistoryResultDirective($compile) 
 {       
     return {
         link: function($scope, element, attrs) {
-        	var tpl = $compile('<h4>Дата: ' + attrs.date + '</h4>')($scope);
+        	var tpl = $compile('<h3>Операция: ' + attrs.operation + '</h3>')($scope);
+            $(element).append(tpl);
+        	tpl = $compile('<h4>Дата: ' + attrs.date + '</h4>')($scope);
             $(element).append(tpl);
             tpl = $compile('<h4>' + attrs.result + '</h4>')($scope);
             $(element).append(tpl);
+        }
+    }
+}
+
+function HistoryElementDirective($compile) 
+{       
+    return {
+        link: function($scope, element, attrs) {
+        	var tpl;
+        	if(attrs.type == 'output')
+        	{
+        		tpl = $compile('<div class="arrow-' + attrs.type + '"></div>')($scope);
+            	$(element).append(tpl);
+        	}
+        	tpl = $compile('<div class="history-body"><h4>' + attrs.label + '</h4><h4>' + attrs.qty + '</h4></div>')($scope);
+            $(element).append(tpl);
+            if(attrs.type == 'input')
+        	{
+        		tpl = $compile('<div class="arrow-' + attrs.type + '"></div>')($scope);
+            	$(element).append(tpl);
+        	}
         }
     }
 }

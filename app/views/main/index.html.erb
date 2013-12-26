@@ -15,29 +15,26 @@
     </div>
 
     <div class='row-fluid' ng-repeat='old in history | filter:query'>
-    <div class='span8'>
+    <div class='span12'>
         <div class='history'>
             <div class='row-fluid'>
-                <div ng-repeat='(label, input) in old.inputs' class='history-body span{{inputHistorySpanType(old.recipeName)}}'>
-                    <h4>{{label}}</h4>
-                    <h4>{{input.qty}}</h4>
+                <div ng-repeat='(label, input) in old.inputs' class='span{{inputHistorySpanType(old.recipeName)}}'>
+                    <div history-element label="{{label}}" qty="{{input.qty}}" type="input"></div>
                 </div>
             </div>
 
-            <div class='row-fluid history-body'>
-              <h2>Операция: {{old.recipeName}}</h2>
+            <div class='row-fluid'>
+                <div class='span12 history-recipe-{{orderSuccess(old)}}'>
+                    <div history-result date='{{old.date}}' result='{{old.result}}' operation="{{old.recipeName}}"></div>
+                </div>
             </div>
 
             <div class='row-fluid'>
-                <div ng-repeat='(label, output) in old.outputs' class='history-body span{{outputHistorySpanType(old.recipeName)}}'>
-                    <h4>{{label}}</h4>
-                    <h4>{{output.qty}}</h4>
+                <div ng-repeat='(label, output) in old.outputs' class='span{{outputHistorySpanType(old.recipeName)}}'>
+                    <div history-element label="{{label}}" qty="{{output.qty}}" type="output"></div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class='span4 history'>
-        <div history-result date='{{old.date}}' result='{{old.result}}'></div>
     </div>
     </div>
 
