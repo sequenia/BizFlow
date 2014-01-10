@@ -1,11 +1,11 @@
 $(document).ready(function()
 {
-	angular.bootstrap(document.getElementById('production'), ['ProductionApp']);
+	angular.bootstrap(document.getElementById('bizflow'), ['BizFlowApp']);
 });
 
-var productionApp = angular.module("ProductionApp", []);
+var bizflow = angular.module("BizFlowApp", []);
 
-var productionCtrl = function($scope, $http, $templateCache)
+var bizFlowCtrl = function($scope, $http, $templateCache)
 {
 	$http.defaults.useXDomain = true;
     delete $http.defaults.headers.common['X-Requested-With'];
@@ -16,11 +16,13 @@ var productionCtrl = function($scope, $http, $templateCache)
         get:  'GET',
         post: 'POST'
     };
-    $scope.url        = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8'; 
-    $scope.loading    = true;
-	$scope.cylinder   = new CylinderItems();
-	$scope.history    = [];
-	$scope.recipeName = '';
+    $scope.url            = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8'; 
+    $scope.loading        = true;
+	$scope.cylinder       = new CylinderItems();
+	$scope.planner        = new PlannerItems();
+	$scope.history        = [];
+	$scope.recipeName     = '';
+	$scope.productionName = '';
 	$scope.recipes; //= {"Шпатлевка":{"inputs":[{"critical":0,"pct":4.8,"UOM":"кг","onHand":432,"productName":"Мрам - 100"},{"critical":0,"pct":15.4,"UOM":"кг","onHand":1386,"productName":"Химик - 3М"},{"critical":0,"pct":15.9,"UOM":"кг","onHand":1431,"productName":"Загуститель ВС"},{"critical":800,"pct":63.9,"UOM":"кг","onHand":1141,"productName":"ГО-1"}],"itemType":30,"name":"Шпатлевка","outputs":[{"pct":100,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"productionLocation":"Цех"},"Шпат-20кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 20кг"},{"critical":0,"pct":20,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-20кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-20кг"}],"productionLocation":"Цех"},"Просев":{"inputs":[{"critical":0,"pct":80,"UOM":"кг","onHand":800,"productName":"Гипс К"},{"critical":8000,"pct":20,"UOM":"кг","onHand":450,"productName":"Вяж. 1"}],"itemType":20,"name":"Просев","outputs":[{"pct":9,"UOM":"шт","productName":"ГО-2","onHand":220},{"pct":91,"UOM":"шт","productName":"ГО-1","onHand":1141}],"productionLocation":"Цех"},"Шпат-25кг":{"inputs":[{"critical":0,"pct":25,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 25кг"}],"itemType":40,"name":"Шпат-25кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-25кг"}],"productionLocation":"Цех"},"Шпат-10кг":{"inputs":[{"critical":0,"pct":10,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 10кг"}],"itemType":40,"name":"Шпат-10кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-10кг"}],"productionLocation":"Цех"},"Шпат-5кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 5кг"},{"critical":0,"pct":5,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-5кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-5кг"}],"productionLocation":"Цех"}};
 
 	init();
@@ -55,7 +57,8 @@ var productionCtrl = function($scope, $http, $templateCache)
 
         for(var key in $scope.recipes)
 		{
-			$scope.recipeName = key;
+			$scope.recipeName     = key;
+			$scope.productionName = key;
 			break;
 		}
 
@@ -169,11 +172,14 @@ var productionCtrl = function($scope, $http, $templateCache)
 	};
 };
 
-productionApp.controller("productionCtrl", productionCtrl);
+bizflow.controller("bizFlowCtrl", bizFlowCtrl);
 
-productionApp.directive('cylinder', CylinderDirective);
-productionApp.directive('historyResult', HistoryResultDirective);
-productionApp.directive('historyElement', HistoryElementDirective);
+bizflow.directive('cylinder', CylinderDirective);
+bizflow.directive('historyResult', HistoryResultDirective);
+bizflow.directive('historyElement', HistoryElementDirective);
+
+bizflow.directive('commVessels', CommVesselsDirective);
+bizflow.directive('planning', PlanningProductDirective);
 
 function HistoryResultDirective($compile) 
 {       

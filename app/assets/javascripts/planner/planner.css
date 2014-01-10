@@ -1,0 +1,181 @@
+.vessel-body {
+	font-size: 14px;
+	text-align: center;
+	width: 99%;
+	height: 6.5em;
+}
+
+.tube-container {
+	float: left;
+	width: 100%;
+}
+
+.tube-body {
+	margin: 0 25% 0 25%;
+}
+
+.tube {
+	background-image: repeating-linear-gradient(60deg, #E3E3E3 0px, #E3E3E3 0px, #CACACA 0px, #CACACA 0px, #E3E3E3 0px, #E3E3E3 20px, #CACACA 20px, #CACACA 40px);
+	border-top: 1px solid #B3B3B3;
+	border-bottom: 1px solid #B3B3B3;
+	font-size: 1.6em;
+	font-weight: bold;
+}
+
+.tube-qty {
+	padding: 0.3em;
+}
+
+.storage,
+.storage-coloring,
+.workshop {
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px; 
+  	border-radius:6px;
+	-khtml-border-radius:10px;
+}
+
+.storage {
+	float: left;
+	width: 25%;
+	margin-left: -100%;
+	background-color: #DADAFF;
+	height: 5em;
+	position: relative;
+}
+
+.storage-coloring,
+.storage-having,
+.storage-critical {
+	width: 100%; 
+	height: 100%; 
+	position: absolute;
+}
+
+.storage-left {
+	position: absolute;
+	right: 0;
+}
+
+.storage-having,
+.storage-critical,
+.storage-left {
+	margin-top: -0.8em;
+	opacity: 0.3;
+}
+
+.planner-labels-dash,
+.planner-labels-dash-red {
+	float: left;
+	width: 1.3em;
+	height: 0.85em;
+	margin-left: 0.2em;
+}
+
+.planner-labels-dash {
+	border-bottom: 2px solid #4866FF;
+}
+
+.planner-labels-dash-red {
+	border-bottom: 2px solid #FF7777;
+}
+
+.planner-labels-having,
+.planner-labels-critical {
+	float: left;
+	font-weight: bold;
+	margin-left: 0.2em;
+}
+
+.planner-labels-having {
+	color: #4866FF;
+}
+
+.planner-labels-critical {
+	color: #FF7777;
+}
+
+.workshop {
+	background-color: #FFE7CE;
+	float: left;
+	width: 25%;
+	margin-left: -25%;
+	height: 5em;
+	position: relative;
+}
+
+.planning-container {
+	margin-bottom: 1em;
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+
+.planning-body {
+	-webkit-border-radius:6px; 
+	-moz-border-radius:5px; 
+  	border-radius:6px;
+	-khtml-border-radius:10px;
+	margin: 0 30% 0 30%;
+	background-color: #E3E3E3;
+	border: 1px solid #B3B3B3;
+	padding: 1em;
+}
+
+.planner-value {
+	font-weight: bold; 
+	font-size: 2.0em;
+	color: #00c;
+	border-bottom: 1px dashed #00c;
+}
+
+.planning-label {
+	font-size: 1.4em;
+	font-weight: bold;
+}
+
+.product-label {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.hand-input {
+	font-weight: bold; 
+	font-size: 2.0em;
+	color: #00c;
+	text-align: center;
+	width: 80%;
+}
+
+.DragHorizontal {
+	cursor: pointer;
+	cursor: move;
+	cursor: col-resize;
+}
+
+.planner-labels-left {
+	width: 100%;
+	margin-left: 45%;
+	padding: .2em .3em .3em;
+	font-weight: bold;
+	line-height: 1;
+	color: #ffffff;
+	background-color: #999999;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+}
+
+.planner-labels-left:before {
+    z-index: 1;
+    position: absolute;
+    content:'';
+    width: 100%;
+    height: 0;
+    right: 50%;
+    bottom: 0.05em;
+	border-style: solid;
+	border-width: 0.75em 1.4em 0.75em 0;
+	border-color: transparent rgb(153, 153, 153) transparent transparent;
+}
