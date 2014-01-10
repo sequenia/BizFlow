@@ -347,6 +347,9 @@ function PlanningProductDirective($compile)
                 {
                     touchDidGoDown: function (touches) 
                     {
+                        $(document).find('.storage-having').css('opacity', '1.0');
+                        $(document).find('.storage-critical').css('opacity', '1.0');
+                        $(document).find('.storage-left').css('opacity', '1.0');
                         $('.hand-input').blur();
                         valueAtMouseDown = $scope.planner.getOutputQty(label);
                         isDragging = true;
@@ -356,9 +359,6 @@ function PlanningProductDirective($compile)
                     
                     touchDidMove: function (touches) 
                     {
-                        $(document).find('.storage-having').css('opacity', '1.0');
-                        $(document).find('.storage-critical').css('opacity', '1.0');
-                        $(document).find('.storage-left').css('opacity', '1.0');
                         var value = valueAtMouseDown + touches.translation.x / 5 * step;
                         value = ((value / step).round() * step);
                         var oldValue = $scope.planner.getOutputQty(label);
