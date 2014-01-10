@@ -1,6 +1,11 @@
-var app = angular.module("bizflow", []);
+$(document).ready(function()
+{
+	angular.bootstrap(document.getElementById('production'), ['ProductionApp']);
+});
 
-var bizFlowCtrl = function($scope, $http, $templateCache)
+var productionApp = angular.module("ProductionApp", []);
+
+var productionCtrl = function($scope, $http, $templateCache)
 {
 	$http.defaults.useXDomain = true;
     delete $http.defaults.headers.common['X-Requested-With'];
@@ -164,11 +169,11 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	};
 };
 
-app.controller("bizFlowCtrl", bizFlowCtrl);
+productionApp.controller("productionCtrl", productionCtrl);
 
-app.directive('cylinder', CylinderDirective);
-app.directive('historyResult', HistoryResultDirective);
-app.directive('historyElement', HistoryElementDirective);
+productionApp.directive('cylinder', CylinderDirective);
+productionApp.directive('historyResult', HistoryResultDirective);
+productionApp.directive('historyElement', HistoryElementDirective);
 
 function HistoryResultDirective($compile) 
 {       
@@ -179,6 +184,7 @@ function HistoryResultDirective($compile)
         	tpl = $compile('<h4>Дата: ' + attrs.date + '</h4>')($scope);
             $(element).append(tpl);
             tpl = $compile('<h4>' + attrs.result + '</h4>')($scope);
+            console.log(attrs.result);
             $(element).append(tpl);
         }
     }
