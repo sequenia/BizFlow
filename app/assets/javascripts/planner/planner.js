@@ -15,6 +15,10 @@ function roundingTruncate (x, precision, rounding)
     return Math[rounding](x * scale) / scale;
 }
 
+
+// Этот класс содержит информацию о складах, складе производства и планируемых количествах продуктов;
+// Объект этого класса следует поместить в контроллер приложения angular
+// под именем planner;
 function PlannerItems(options)
 {
 	var _this          = this;
@@ -23,11 +27,13 @@ function PlannerItems(options)
 	_this.vessels      = {};
 	_this.outputs      = {};
 
+    // Количество, необходимое для производства запланированного количества продукта
     this.getOutputQty = function(label)
     {
         return _this.outputs[label].qty;
     };
 
+    // Количество, оставшееся на складе в результате планирования
     this.getLeftQty = function(label)
     {
         var leftCount = _this.vessels[label].qty - _this.vessels[label].onWorkshop;
@@ -35,6 +41,7 @@ function PlannerItems(options)
         return truncate(_this.vessels[label].onStorage - leftCount, 0);
     };
 
+    // Количество, продукта, взятое со склада, для производства запланированного количества
     this.getOrderQty = function(label)
     {
         var orderQty =  roundingTruncate(_this.vessels[label].qty - _this.vessels[label].onWorkshop, _this.vessels[label].accuracy, _this.vessels[label].rounding);
@@ -42,6 +49,7 @@ function PlannerItems(options)
         return orderQty;
     };
 
+    // Округленное количество для производства. Необходимо для подписи
     this.getCurrentQty = function(label)
     {
         return truncate(_this.vessels[label].qty, 0);
@@ -100,6 +108,7 @@ function PlannerItems(options)
         }
     };
 
+    // Стиль окраски склада
     this.storageHaving = function(label)
     {
         var pctLeft = (_this.vessels[label].onStorage === undefined) ? 100 : 100 - 100 * (_this.vessels[label].qty - _this.vessels[label].onWorkshop) / _this.vessels[label].onStorage;
@@ -121,6 +130,7 @@ function PlannerItems(options)
         }
     };
 
+    // Стиль окраски склада производства
     this.workshopHaving = function(label)
     {
         var pctLeft = 100 * _this.vessels[label].qty / _this.vessels[label].workshopMax;
@@ -139,16 +149,19 @@ function PlannerItems(options)
         }
     };
 
+    // Стиль уровня подписи критического остатка
     this.critical = function(label)
     {
         return {'top': 100 - 100 * _this.vessels[label].critical / _this.vessels[label].onStorage + '%'};
     };
 
+    // Стиль подписи текущего количества на складе производства
     this.onWorkshop = function(label)
     {
         return {'top': 100 - (100 * _this.vessels[label].onWorkshop / _this.vessels[label].workshopMax).limit(0, 100) + '%'};
     };
 
+    // Стиль подписи остатка на складе
     this.storageLeft = function(label)
     {
         var pct = 100 * (_this.vessels[label].qty - _this.vessels[label].onWorkshop).limit(0, _this.vessels[label].onStorage) / _this.vessels[label].onStorage;
@@ -156,6 +169,7 @@ function PlannerItems(options)
         return {'top': pct + '%'};
     };
 
+    // Стиль подписи количества на складе производства после планирования
     this.workshopNow = function(label)
     {
         var pct = 100 - 100 * _this.vessels[label].qty / _this.vessels[label].workshopMax;
@@ -171,6 +185,7 @@ function CommVesselsDirective($compile)
     	link: function($scope, element, attrs) {
     			var label       = attrs.label    || ('Элемент ' + $scope.planner.elemsCounter);
         		var rounding    = attrs.rounding || 'round';
+                var uom         = attrs.uom      || '';
 
         		var proportion  = (attrs.proportion  === undefined) ? 1.0 : parseFloat(attrs.proportion); 
         		var step        = (attrs.step        === undefined) ? 1.0 : parseFloat(attrs.step);
@@ -207,7 +222,8 @@ function CommVesselsDirective($compile)
                     maxLimit:    onWorkshop * 4 || 10,
                     critical:    critical,
                     element:     element,
-                    tubeValue:   0
+                    tubeValue:   0,
+                    uom:         uom
                 };
 
                 $scope.planner.vessels[label] = ves;
@@ -257,7 +273,7 @@ function CommVesselsDirective($compile)
                 tpl = $compile('<div class="planner-labels-left">{{planner.getCurrentQty("' + label + '")}}</div>')($scope);
                 $(element).find('#workshop-now').append(tpl);
 
-                tpl = $compile('<div class="tube-qty"><span id="qty">{{planner.getOrderQty("' + label + '")}}</span></div>')($scope);
+                tpl = $compile('<div class="tube-qty"><span id="qty">{{planner.getOrderQty("' + label + '")}} ' + uom + '</span></div>')($scope);
                 $(element).find('#tube').append(tpl);
 
                 element.on('$destroy', function() {
@@ -288,6 +304,7 @@ function PlanningProductDirective($compile)
         link: function($scope, element, attrs) {
                 var label       = attrs.label    || ('Элемент ' + $scope.planner.elemsCounter);
                 var rounding    = attrs.rounding || 'round';
+                var uom         = attrs.uom      || '';
 
                 var proportion  = (attrs.proportion  === undefined) ? 1.0 : parseFloat(attrs.proportion); 
                 var step        = (attrs.step        === undefined) ? 1.0 : parseFloat(attrs.step);
@@ -313,7 +330,8 @@ function PlanningProductDirective($compile)
                     qty:        0,
                     proportion: proportion,
                     accuracy:   accuracy,
-                    rounding:   rounding
+                    rounding:   rounding,
+                    uom:        uom
                 };
 
                 $scope.planner.outputs[label] = prod;
@@ -321,7 +339,7 @@ function PlanningProductDirective($compile)
                 tpl = $compile('<span>' + label + '</span>')($scope);
                 $(element).find('#planning-label').append(tpl);
 
-                tpl = $compile('<span class="planner-value" id="qty">{{planner.outputs["' + label + '"].qty}}</span>')($scope);
+                tpl = $compile('<span class="planner-value" id="qty">{{planner.outputs["' + label + '"].qty}} ' + uom + '</span>')($scope);
                 $(element).find('#planning-qty').append(tpl);
 
                 function initializeHover() 
@@ -441,13 +459,11 @@ function PlanningProductDirective($compile)
                 });
         },
 
-        template:   '<div id="planning-container" class="planning-container">' + 
-                        '<div id="planning-body" class="planning-body">' +
-                            '<div id="planning-label" class="planning-label">' +
-                            '</div>' +
-                            '<br/>' +
-                            '<div id="planning-qty" class="planning-qty">' +
-                            '</div>' +
+        template:   '<div id="planning-body" class="planning-body">' +
+                        '<div id="planning-label" class="planning-label">' +
+                        '</div>' +
+                        '<br/>' +
+                        '<div id="planning-qty" class="planning-qty">' +
                         '</div>' +
                     '</div>'
     }

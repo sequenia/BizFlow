@@ -6,6 +6,7 @@ function truncate (x, precision)
     return Math.round(x * scale) / scale;
 }
 
+// Округление с заданной точностью и в заданную сторону
 function roundingTruncate (x, precision, rounding)
 {
 	precision = precision || 0;
@@ -15,6 +16,9 @@ function roundingTruncate (x, precision, rounding)
     return Math[rounding](x * scale) / scale;
 }
 
+// Этот класс содержит входные и выходные элементы системы мензурок;
+// Объект этого класса следует поместить в контроллер приложения angular,
+// и обозначить именем cylinder;
 function CylinderItems(options)
 {
 	var cylinder          = this;
@@ -74,6 +78,7 @@ function CylinderItems(options)
 		}
 	};
 
+	// Возвращает стиль, который окрашивает цилиндр необходимым образом
 	cylinder.having = function(label)
 	{
 		var pctLeft     = 100 - 100 * cylinder.inputs[label].qty / cylinder.inputs[label].having;
@@ -95,11 +100,13 @@ function CylinderItems(options)
 		}
 	};
 
+	// Стиль, устанавливающий уровень, на котором будет находится подпись критического остатка
 	cylinder.critical = function(label)
 	{
 		return {'top': 100 - 100 * cylinder.inputs[label].critical / cylinder.inputs[label].having + '%'};
 	}
 
+	// Стиль уровная подписи оставшегося в мензурке количества
 	cylinder.left = function(label)
 	{
 		var pct = 100 * cylinder.inputs[label].qty / cylinder.inputs[label].having;
@@ -118,6 +125,7 @@ function CylinderDirective($compile)
         		var label      = attrs.label || ('Элемент ' + $scope.cylinder.elemsCounter);
         		var type       = attrs.type  || 'input';
         		var rounding   = attrs.rounding || 'round';
+        		var uom        = attrs.uom      || '';
 
         		var proportion = (attrs.proportion === undefined) ? 1.0 : parseFloat(attrs.proportion); 
         		var step       = (attrs.step       === undefined) ? 1.0 : parseFloat(attrs.step);
@@ -158,7 +166,8 @@ function CylinderDirective($compile)
                 	accuracy:   accuracy,
                 	rounding:   rounding,
                 	having:     truncate(having, 2),
-                	critical:   truncate(critical, 2)
+                	critical:   truncate(critical, 2),
+                	uom:        uom
         		};
 
         		var tpl;
@@ -167,13 +176,13 @@ function CylinderDirective($compile)
                 {
                 	$scope.cylinder.inputs[label] = cyl;
                 	$(element).find('#grad-cylinder').addClass('input-cylinder');
-                	tpl = $compile('<span class="cylinder-value" id="qty">{{cylinder.inputs["' + label + '"].qty}}</span>')($scope);
+                	tpl = $compile('<span class="cylinder-value" id="qty">{{cylinder.inputs["' + label + '"].qty}} ' + uom + '</span>')($scope);
             	}
             	else
             	{
             		$scope.cylinder.outputs[label] = cyl;
             		$(element).find('#grad-cylinder').addClass('output-cylinder');
-            		tpl = $compile('<span class="cylinder-value" id="qty">{{cylinder.outputs["' + label + '"].qty}}</span>')($scope);
+            		tpl = $compile('<span class="cylinder-value" id="qty">{{cylinder.outputs["' + label + '"].qty}} ' + uom + '</span>')($scope);
             	}
 				$(element).find('#qty-container').append(tpl);
                 $scope.cylinder.elemsCounter++;
