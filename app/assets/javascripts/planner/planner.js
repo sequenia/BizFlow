@@ -86,8 +86,9 @@ function PlannerItems(options)
             }
             if(_this.vessels[key].qty > _this.vessels[key].onWorkshop)
             {
-                tubeValue = (tubeValue + _this.vessels[key].qty - oldValue) % 40;
+                tubeValue = Math.round(tubeValue + (_this.vessels[key].qty - oldValue) * 4) % 40;
                 if(tubeValue < 0) tubeValue = (40 + tubeValue) % 40;   
+                if(key == 'Загуститель ВС (15.9%)') console.log(tubeValue);
                 while(true)
                 {
                     if(tubeValue >= 0 && tubeValue < 20)
@@ -448,7 +449,7 @@ function PlanningProductDirective($compile)
                 function initializeDrag()
                 {
                     isDragging = false;
-                    new BVTouchable($(element).find('#qty')[0], drag);
+                    new BVTouchable($(element).find('#planning-body')[0], drag);
                 }
                 
                 initializeHover();

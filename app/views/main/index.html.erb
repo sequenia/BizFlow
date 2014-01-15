@@ -9,11 +9,31 @@
 
     <div class="tabbable">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Производство</a></li>
-            <li><a href="#tab2" data-toggle="tab">Планирование</a></li>
+            <li class="active"><a href="#tab1" data-toggle="tab">Планирование</a></li>
+            <li><a href="#tab2" data-toggle="tab">Производство</a></li>
         </ul>
         <div class="tab-content tab-body">
             <div class="tab-pane active" id="tab1">
+
+                <div class="row-fluid">
+                    <div class="span12">
+
+                    <div class="planning-header">
+                    </div>
+                    <div class="planning-store-label">
+                        <div>
+                            <h5>Склад</h5>
+                        </div>
+                    </div>
+                    <div class="planning-workshop-label">
+                        <div>
+                            <h5>Цех</h5>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <br/>
 
                 <div ng-repeat="input in recipes[productionName].inputs" id="planning-inputs">
                     <div comm-vessels label="{{getInputName(input, productionName)}}" proportion="{{input.pct}}" storageqty="50" workshopqty="{{input.onHand}}" critical="20" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
