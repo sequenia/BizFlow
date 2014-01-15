@@ -232,6 +232,7 @@ function CylinderDirective($compile)
 				        									   $scope.cylinder.getOutputQty(label);
 				        isDragging = true;
 				        isAnyAdjustableNumberDragging = true;
+				        clickTime = new Date();
 				        updateCursor();
 				    },
 				    
@@ -262,14 +263,12 @@ function CylinderDirective($compile)
 				        updateCursor();
 
 				        var currentTime = new Date();
-					    delta = currentTime - clickTime;
-					    clickTime = currentTime;
+                        delta = currentTime - clickTime;
 
-					    if(delta < 200) 
-					    {
-					        console.log('double-click');
-					        !textInput && createTextInput();
-					    }
+                        if(delta < 200) 
+                        {
+                            !textInput && createTextInput();
+                        }
 				    }
 				};
 
@@ -312,7 +311,7 @@ function CylinderDirective($compile)
 				function initializeDrag()
 			    {
 			        isDragging = false;
-			        new BVTouchable($(element).find('#qty')[0], drag);
+			        new BVTouchable($(element).find('#grad-cylinder')[0], drag);
 			    }
 		        
 		        initializeHover();

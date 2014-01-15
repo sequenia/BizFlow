@@ -35,21 +35,21 @@
 
                 <br/>
 
-                <div ng-repeat="input in recipes[productionName].inputs" id="planning-inputs">
-                    <div comm-vessels label="{{getInputName(input, productionName)}}" proportion="{{input.pct}}" storageqty="50" workshopqty="{{input.onHand}}" critical="20" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
+                <div ng-repeat="input in recipes[planningRecipeName].inputs" id="planning-inputs">
+                    <div comm-vessels label="{{getInputName(input, planningRecipeName)}}" proportion="{{input.pct}}" storageqty="50" workshopqty="{{input.onHand}}" critical="20" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
                 </div>
 
                 <div id="planning-container" class="planning-container">
                     <div id="planning-content" class="planning-content">
-                        <div ng-repeat="output in recipes[productionName].outputs">
-                            <div planning label="{{getOutputName(output, productionName)}}" proportion="{{output.pct}}" accuracy="{{output.accuracy}}" rounding="{{output.rounding}}" uom="{{output.UOM}}"></div>
+                        <div ng-repeat="output in recipes[planningRecipeName].outputs">
+                            <div planning label="{{getOutputName(output, planningRecipeName)}}" proportion="{{output.pct}}" accuracy="{{output.accuracy}}" rounding="{{output.rounding}}" uom="{{output.UOM}}"></div>
                         </div>  
                     </div>
                 </div>
 
                 <div class="planning-selecter">
                     <h4><b>Продукт:</b></h4>
-                    <select ng-model='productionName' style='width: 85%'>
+                    <select ng-model='planningRecipeName' style='width: 85%'>
                         <option ng-repeat='recipe in recipes'>{{recipe.name}}</option>
                     </select>
                 </div>
@@ -66,8 +66,8 @@
 
             <div class="tab-pane" id="tab2">
                 <div class='row-fluid' id='productionInputs'>
-                    <div ng-repeat='input in recipes[recipeName].inputs' class='span{{inputSpanType()}}'>
-                        <div cylinder type='input' label='{{getInputName(input, recipeName)}}' proportion='{{input.pct}}' having='{{input.onHand}}' critical='{{input.critical}}' accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
+                    <div ng-repeat='input in recipes[productionRecipeName].inputs' class='span{{inputSpanType()}}'>
+                        <div cylinder type='input' label='{{getInputName(input, productionRecipeName)}}' proportion='{{input.pct}}' having='{{input.onHand}}' critical='{{input.critical}}' accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
                         <div class='arrow-input'></div>
                     </div>
                 </div>
@@ -75,21 +75,21 @@
                 <div class='row-fluid mixer-body'>
                     <div class='center-div'>
                         <h2><b>Операция:</b></h2>
-                        <select ng-model='recipeName'>
+                        <select ng-model='productionRecipeName'>
                             <option ng-repeat='recipe in recipes'>{{recipe.name}}</option>
                         </select>
                     </div>
                 </div>
 
                 <div class='row-fluid'>
-                    <div ng-repeat='output in recipes[recipeName].outputs' class='span{{outputSpanType()}}'>
+                    <div ng-repeat='output in recipes[productionRecipeName].outputs' class='span{{outputSpanType()}}'>
                         <div class='arrow-output'></div>
-                        <div cylinder type='output' label='{{getOutputName(output, recipeName)}}' proportion='{{output.pct}}' accuracy="{{output.accuracy}}" rounding="{{output.rounding}}" uom="{{output.UOM}}"></div>
+                        <div cylinder type='output' label='{{getOutputName(output, productionRecipeName)}}' proportion='{{output.pct}}' accuracy="{{output.accuracy}}" rounding="{{output.rounding}}" uom="{{output.UOM}}"></div>
                     </div>
                 </div>
 
                 <div class='submit-container'>
-                    <form ng-submit="execute()">
+                    <form ng-submit="productionExecute()">
                           <input class='btn btn-default btn-lg' type='submit' value="{{loading && 'Загрузка...' || 'Пуск'}}" ng-disabled="executeButtonDisabled()">
                     </form>
                 </div>

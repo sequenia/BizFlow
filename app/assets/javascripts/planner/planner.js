@@ -97,7 +97,6 @@ function PlannerItems(options)
                 }
                 tubeValue = (tubeValue + sign * 3) % 40;//Math.round(tubeValue + (_this.vessels[key].qty - oldValue) * 4) % 40;
                 if(tubeValue < 0) tubeValue = (40 + tubeValue) % 40;   
-                if(key == 'Загуститель ВС (15.9%)') console.log(tubeValue);
                 while(true)
                 {
                     if(tubeValue >= 0 && tubeValue < 20)
@@ -382,6 +381,7 @@ function PlanningProductDirective($compile)
                         valueAtMouseDown = $scope.planner.getOutputQty(label);
                         isDragging = true;
                         isAnyAdjustableNumberDragging = true;
+                        clickTime = new Date();
                         updateCursor();
                     },
                     
@@ -411,11 +411,9 @@ function PlanningProductDirective($compile)
 
                         var currentTime = new Date();
                         delta = currentTime - clickTime;
-                        clickTime = currentTime;
 
                         if(delta < 200) 
                         {
-                            console.log('double-click');
                             !textInput && createTextInput();
                         }
                     }

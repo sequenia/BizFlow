@@ -22,8 +22,8 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	$scope.planner        = new PlannerItems();
 	$scope.history        = {};
 	$scope.historyLength  = 0;
-	$scope.recipeName     = '';
-	$scope.productionName = '';
+	$scope.productionRecipeName = '';
+	$scope.planningRecipeName   = '';
 	$scope.recipes; //= {"Шпатлевка":{"inputs":[{"critical":0,"pct":4.8,"UOM":"кг","onHand":432,"productName":"Мрам - 100"},{"critical":0,"pct":15.4,"UOM":"кг","onHand":1386,"productName":"Химик - 3М"},{"critical":0,"pct":15.9,"UOM":"кг","onHand":1431,"productName":"Загуститель ВС"},{"critical":800,"pct":63.9,"UOM":"кг","onHand":1141,"productName":"ГО-1"}],"itemType":30,"name":"Шпатлевка","outputs":[{"pct":100,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"productionLocation":"Цех"},"Шпат-20кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 20кг"},{"critical":0,"pct":20,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-20кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-20кг"}],"productionLocation":"Цех"},"Просев":{"inputs":[{"critical":0,"pct":80,"UOM":"кг","onHand":800,"productName":"Гипс К"},{"critical":8000,"pct":20,"UOM":"кг","onHand":450,"productName":"Вяж. 1"}],"itemType":20,"name":"Просев","outputs":[{"pct":9,"UOM":"шт","productName":"ГО-2","onHand":220},{"pct":91,"UOM":"шт","productName":"ГО-1","onHand":1141}],"productionLocation":"Цех"},"Шпат-25кг":{"inputs":[{"critical":0,"pct":25,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 25кг"}],"itemType":40,"name":"Шпат-25кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-25кг"}],"productionLocation":"Цех"},"Шпат-10кг":{"inputs":[{"critical":0,"pct":10,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 10кг"}],"itemType":40,"name":"Шпат-10кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-10кг"}],"productionLocation":"Цех"},"Шпат-5кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 5кг"},{"critical":0,"pct":5,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-5кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-5кг"}],"productionLocation":"Цех"}};
 
 	init();
@@ -61,8 +61,8 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 
         for(var key in $scope.recipes)
 		{
-			$scope.recipeName     = key;
-			$scope.productionName = key;
+			$scope.productionRecipeName = key;
+			$scope.planningRecipeName   = key;
 			break;
 		}
 
@@ -70,14 +70,14 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     }
 
     // Выполняется при оформлении производства
-    function successCallback(data, status)
+    function successProductionCallback(data, status)
     {
     	console.log("Request was successful");
         var old = 
 		{
 			'inputs':     $.extend(true, {}, $scope.cylinder.inputs),
 			'outputs':    $.extend(true, {}, $scope.cylinder.outputs),
-			'recipeName': $scope.recipeName,
+			'recipeName': $scope.productionRecipeName,
 			'date':       (new Date()).toLocaleString(),
 			'result':     data.productionResult,
 			'type':       'production'
@@ -94,16 +94,40 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 		}, "slow");
     }
 
+    // Выполняется при оформлении планирования
+    function successPlanningCallback(data, status)
+    {
+        console.log("Request was successful");
+        var old = 
+        {
+            'inputs':     $.extend(true, {}, $scope.planner.vessels),
+            'outputs':    $.extend(true, {}, $scope.planner.outputs),
+            'recipeName': $scope.planningRecipeName,
+            'date':       (new Date()).toLocaleString(),
+            'result':     data.productionResult,
+            'type':       'planning'
+        };
+
+        $scope.history[($scope.historyLength++) + ''] = old;
+
+        $scope.loading = false;
+
+        $('html, body').animate({
+            scrollTop: $("#planning-inputs").offset().top
+        }, "slow");
+    }
+
 	// Выполняется при нажатии кнопки Пуск производства
-	$scope.execute = function()
+	$scope.productionExecute = function()
 	{
         var sendData =
         {
         	dataAreaId: 'strd',
         	encoding: 'UTF-8',
+            actionType: 'production',
             Order:
             {
-                recipeName: $scope.recipeName,
+                recipeName: $scope.productionRecipeName,
                 totalCount: 0
             }
         };
@@ -113,29 +137,30 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
         	sendData.Order.totalCount += $scope.cylinder.outputs[key].qty;
         }
 
-        executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successCallback, errorCallback);
+        executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successProductionCallback, errorCallback);
 	};
 
 	// Выполняется при нажатии кнопки Пуск планирования
 	$scope.planningExecute = function()
 	{
-		var old = 
-		{
-			'inputs':     $.extend(true, {}, $scope.planner.vessels),
-			'outputs':    $.extend(true, {}, $scope.planner.outputs),
-			'recipeName': $scope.productionName,
-			'date':       (new Date()).toLocaleString(),
-			'result':     '',
-			'type':       'planning'
-		};
+        var sendData =
+        {
+            dataAreaId: 'strd',
+            encoding: 'UTF-8',
+            actionType: 'planning',
+            Order:
+            {
+                recipeName: $scope.planningRecipeName,
+                totalCount: 0
+            }
+        };
 
-		$scope.history[($scope.historyLength++) + ''] = old;
+        for(var key in $scope.planner.outputs)
+        {
+            sendData.Order.totalCount += $scope.planner.outputs[key].qty;
+        }
 
-        $scope.loading = false;
-
-		$('html, body').animate({
-		    scrollTop: $("#planning-inputs").offset().top
-		}, "slow");
+        executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successPlanningCallback, errorCallback);
 	};
 
 	// Поличить корректную подпись для продукта
@@ -166,14 +191,14 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 
 	$scope.inputSpanType = function()
 	{
-		var type = Math.ceil(12 / $scope.recipes[$scope.recipeName].inputs.length);
+		var type = Math.ceil(12 / $scope.recipes[$scope.productionRecipeName].inputs.length);
 		if(type < 3) type = 3;
 		return type; 
 	};
 
 	$scope.outputSpanType = function()
 	{
-		var type = Math.ceil(12 / $scope.recipes[$scope.recipeName].outputs.length);
+		var type = Math.ceil(12 / $scope.recipes[$scope.productionRecipeName].outputs.length);
 		if(type < 3) type = 3;
 		return type; 
 	};
@@ -272,7 +297,7 @@ function HistoryDirective($compile)
             			tpl = $compile( '<div class="row-fluid">' +
             								'<div class="span4 planning-history-body">' +
             									'<div class="arrow-planning"></div>' +
-            									'<span><h4>Остаток: ' + leftCount + ' ' + history.inputs[label].uom + '</h4></span>' +
+            									'<span><h4>Остаток на складе: ' + leftCount + ' ' + history.inputs[label].uom + '</h4></span>' +
             								'</div>' +
             								'<div class="span4 planning-history-body">' +
             									'<div class="arrow-planning"></div>' +
@@ -287,8 +312,10 @@ function HistoryDirective($compile)
             		for(var label in history.outputs)
             		{
             			tpl = $compile( '<div class="row-fluid" id="product">' +
-             								'<div class="span12 history-recipe-true" style="margin-bottom: 1em;">' +
+             								'<div class="span12 history-recipe-' + $scope.orderSuccess(history) + '" style="margin-bottom: 1em;">' +
              									'<span><h4>Запланировано ' + label + ': ' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</h4></span>' +
+                                                '<h4>Дата: ' + history.date + '</h4>' +
+                                                '<h4>' + history.result + '</h4>' +
             								'</div>' +
             							'</div>')($scope);
             			$(element).find("#history").append(tpl);
