@@ -246,7 +246,7 @@ function CommVesselsDirective($compile)
                 tpl = $compile('<div ng-style="planner.workshopHaving(\'' + label + '\')" class="storage-coloring" id="workshop-coloring"></div>')($scope);
                 $(element).find('#workshop').append(tpl);
 
-                if(onStorage)
+                if(onStorage !== undefined)
                 {
                     tpl = $compile('<div class="storage-having" id="storage-having"></div>')($scope);
                     $(element).find('#storage').append(tpl);

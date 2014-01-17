@@ -3,6 +3,13 @@ $(document).ready(function()
 	angular.bootstrap(document.getElementById('bizflow'), ['BizFlowApp']);
 });
 
+var ResultStatus = 
+{
+    OK:       1,
+    FAILURE:  2,
+    OK_EXTRA: 3
+};
+
 var bizflow = angular.module("BizFlowApp", []);
 
 var bizFlowCtrl = function($scope, $http, $templateCache)
@@ -25,6 +32,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	$scope.productionRecipeName = '';
 	$scope.planningRecipeName   = '';
 	$scope.recipes; //= {"Шпатлевка":{"inputs":[{"critical":0,"pct":4.8,"UOM":"кг","onHand":432,"productName":"Мрам - 100"},{"critical":0,"pct":15.4,"UOM":"кг","onHand":1386,"productName":"Химик - 3М"},{"critical":0,"pct":15.9,"UOM":"кг","onHand":1431,"productName":"Загуститель ВС"},{"critical":800,"pct":63.9,"UOM":"кг","onHand":1141,"productName":"ГО-1"}],"itemType":30,"name":"Шпатлевка","outputs":[{"pct":100,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"productionLocation":"Цех"},"Шпат-20кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 20кг"},{"critical":0,"pct":20,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-20кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-20кг"}],"productionLocation":"Цех"},"Просев":{"inputs":[{"critical":0,"pct":80,"UOM":"кг","onHand":800,"productName":"Гипс К"},{"critical":8000,"pct":20,"UOM":"кг","onHand":450,"productName":"Вяж. 1"}],"itemType":20,"name":"Просев","outputs":[{"pct":9,"UOM":"шт","productName":"ГО-2","onHand":220},{"pct":91,"UOM":"шт","productName":"ГО-1","onHand":1141}],"productionLocation":"Цех"},"Шпат-25кг":{"inputs":[{"critical":0,"pct":25,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 25кг"}],"itemType":40,"name":"Шпат-25кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-25кг"}],"productionLocation":"Цех"},"Шпат-10кг":{"inputs":[{"critical":0,"pct":10,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 10кг"}],"itemType":40,"name":"Шпат-10кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-10кг"}],"productionLocation":"Цех"},"Шпат-5кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 5кг"},{"critical":0,"pct":5,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-5кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-5кг"}],"productionLocation":"Цех"}};
+    $scope.catalogIsSorted = false;
 
 	init();
 
@@ -32,6 +40,119 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	{
 		executeQuery($scope.methods.get, $scope.url, "", initializeCallback, errorCallback);
 	}
+
+    function isotopeInit()
+    {
+        var items = 
+        {
+            'Имя 1': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Производимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 1'
+            },
+            'Имя 2': 
+            {
+                'groupName': 'Группа 3',
+                'groupType': 'Производимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 3': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Непроизводимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 4': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Непроизводимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 3'
+            },
+            'Имя 5': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Производимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 2'
+            },
+            'Имя 6': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Непроизводимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 7': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Производимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 8': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Производимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 3'
+            },
+            'Имя 9': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Непроизводимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 1'
+            }
+        };
+
+        $('#items-catalog').isotope({
+            itemSelector: '.catalog-item',
+            layoutMode:   'fitRows',
+            getSortData: {
+                'item-uom': function($elem){
+                    return $elem.find('.item-uom').text();
+                },
+                'item-name': function($elem){
+                    return $elem.find('.item-name').text();
+                },
+                'group-name': function($elem){
+                    return $elem.find('.group-name').text();
+                },
+                'group-type': function($elem){
+                    return $elem.find('.group-type').text();
+                },
+                'item-type': function($elem){
+                    return $elem.find('.item-type').text();
+                }
+            },
+            sortBy : 'item-name'
+        });
+
+        $('#sorting a').click(function(element){
+            $('#sorting a').removeClass("disabled btn-primary");
+            $(this).addClass("disabled btn-primary");
+            var sortName = $(this).attr('href').slice(1);
+            $('#items-catalog').isotope({ sortBy : sortName });
+            return false;
+        });
+
+        for(var name in items)
+        {
+            var $newEls = $('<div class="catalog-item item-card">' +
+                                '<p class="item-uom">' + items[name].uom + '</p>' +
+                                '<p class="item-name">' + name + '</p>' +
+                                '<p class="group-name">' + items[name].groupName + '</p>' +
+                                '<p class="group-type">' + items[name].groupType +'</p>' +
+                                '<p class="item-type">' + items[name].itemType + '</p>' +
+                            '</div>');
+            $('#items-catalog').isotope('insert', $newEls);
+        }
+    }
 
 	// Выполняет запрос заданного типа, по заданной URL;
 	// В случае успеха выполняется successCallback, в случае ошибки - errorCallback;
@@ -49,7 +170,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 
     function errorCallback(data, status)
     {
-        console.log("Request failed");
+        console.log(data);
         $scope.loading = false;
     }
 
@@ -57,7 +178,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     function initializeCallback(data, status)
     {
         console.log("Request was successful");
-        $scope.recipes = $.extend(true, {}, data.Reciptes)
+        $scope.recipes = $.extend(true, {}, data.Reciptes);
 
         for(var key in $scope.recipes)
 		{
@@ -66,27 +187,42 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 			break;
 		}
 
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if(!$scope.catalogIsSorted)
+            {
+                var sortName = $('#sorting').find(".disabled").first().attr('href').slice(1);
+                $('#items-catalog').isotope({ sortBy : sortName });
+                $scope.catalogIsSorted = true;
+            }
+        })
+
+        isotopeInit();
+
         $scope.loading = false;
+    }
+
+    function addToHistory(inputs, outputs, recipeName, data, type)
+    {
+        var old = 
+        {
+            'inputs':     $.extend(true, {}, inputs),
+            'outputs':    $.extend(true, {}, outputs),
+            'recipeName': recipeName,
+            'date':       (new Date()).toLocaleString(),
+            'result':     data.result,
+            'status':     data.status,
+            'type':       type
+        };
+
+        $scope.history[($scope.historyLength++) + ''] = old;
+        $scope.recipes = data.newReciptes.Reciptes;
     }
 
     // Выполняется при оформлении производства
     function successProductionCallback(data, status)
     {
     	console.log("Request was successful");
-        var old = 
-		{
-			'inputs':     $.extend(true, {}, $scope.cylinder.inputs),
-			'outputs':    $.extend(true, {}, $scope.cylinder.outputs),
-			'recipeName': $scope.productionRecipeName,
-			'date':       (new Date()).toLocaleString(),
-			'result':     data.productionResult,
-			'type':       'production'
-		};
-
-		$scope.history[($scope.historyLength++) + ''] = old;
-
-        $scope.recipes = data.newReciptes.Reciptes;
-
+        addToHistory($scope.cylinder.inputs, $scope.cylinder.outputs, $scope.productionRecipeName, data, 'production');
         $scope.loading = false;
 
 		$('html, body').animate({
@@ -98,18 +234,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     function successPlanningCallback(data, status)
     {
         console.log("Request was successful");
-        var old = 
-        {
-            'inputs':     $.extend(true, {}, $scope.planner.vessels),
-            'outputs':    $.extend(true, {}, $scope.planner.outputs),
-            'recipeName': $scope.planningRecipeName,
-            'date':       (new Date()).toLocaleString(),
-            'result':     data.productionResult,
-            'type':       'planning'
-        };
-
-        $scope.history[($scope.historyLength++) + ''] = old;
-
+        addToHistory($scope.planner.vessels, $scope.planner.outputs, $scope.planningRecipeName, data, 'planning');
         $scope.loading = false;
 
         $('html, body').animate({
@@ -117,49 +242,40 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
         }, "slow");
     }
 
-	// Выполняется при нажатии кнопки Пуск производства
-	$scope.productionExecute = function()
-	{
+    function createSendData(recipeName, outputs, actionType)
+    {
         var sendData =
         {
-        	dataAreaId: 'strd',
-        	encoding: 'UTF-8',
-            actionType: 'production',
+            dataAreaId: 'strd',
+            encoding: 'UTF-8',
+            actionType: actionType,
+            userId: 'test',
             Order:
             {
-                recipeName: $scope.productionRecipeName,
+                recipeName: recipeName,
                 totalCount: 0
             }
         };
 
-        for(var key in $scope.cylinder.outputs)
+        for(var key in outputs)
         {
-        	sendData.Order.totalCount += $scope.cylinder.outputs[key].qty;
+            sendData.Order.totalCount += outputs[key].qty;
         }
 
+        return sendData;
+    }
+
+	// Выполняется при нажатии кнопки Пуск производства
+	$scope.productionExecute = function()
+	{
+        var sendData = createSendData($scope.productionRecipeName, $scope.cylinder.outputs, 'production');
         executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successProductionCallback, errorCallback);
 	};
 
 	// Выполняется при нажатии кнопки Пуск планирования
 	$scope.planningExecute = function()
 	{
-        var sendData =
-        {
-            dataAreaId: 'strd',
-            encoding: 'UTF-8',
-            actionType: 'planning',
-            Order:
-            {
-                recipeName: $scope.planningRecipeName,
-                totalCount: 0
-            }
-        };
-
-        for(var key in $scope.planner.outputs)
-        {
-            sendData.Order.totalCount += $scope.planner.outputs[key].qty;
-        }
-
+        var sendData = createSendData($scope.planningRecipeName, $scope.planner.outputs, 'planning');
         executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successPlanningCallback, errorCallback);
 	};
 
@@ -172,7 +288,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 		}
 		else
 		{
-			return output.productName + ' (' + output.pct + '%)'
+			return output.productName + ' (' + output.pct + '%)';
 		}
 	};
 
@@ -185,7 +301,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 		}
 		else
 		{
-			return input.productName + ' (' + input.pct + '%)'
+			return input.productName + ' (' + input.pct + '%)';
 		}
 	};
 
@@ -224,7 +340,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 
 	$scope.orderSuccess = function(old)
 	{
-		return (old.result.search('успешно') == -1) ? false : true;
+		return (old.status == ResultStatus.OK || old.status == ResultStatus.OK_EXTRA);
 	};
 };
 

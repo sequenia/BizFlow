@@ -9,34 +9,29 @@
 
     <div class="tabbable">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Планирование</a></li>
-            <li><a href="#tab2" data-toggle="tab">Производство</a></li>
+            <li class="active"><a id="planning-button" href="#tab1" data-toggle="tab">Планирование</a></li>
+            <li><a id="productionButton" href="#tab2" data-toggle="tab">Производство</a></li>
+            <li><a id="catalog-button" href="#tab3" data-toggle="tab">Справочник</a></li>
         </ul>
         <div class="tab-content tab-body">
             <div class="tab-pane active" id="tab1">
 
                 <div class="row-fluid">
                     <div class="span12">
-
-                    <div class="planning-header">
-                    </div>
-                    <div class="planning-store-label">
-                        <div>
-                            <h5>Склад</h5>
+                        <div class="planning-header"></div>
+                        <div class="planning-store-label">
+                            <div><h5>Склад</h5></div>
                         </div>
-                    </div>
-                    <div class="planning-workshop-label">
-                        <div>
-                            <h5>Цех</h5>
+                        <div class="planning-workshop-label">
+                            <div><h5>Цех</h5></div>
                         </div>
-                    </div>
                     </div>
                 </div>
 
                 <br/>
 
                 <div ng-repeat="input in recipes[planningRecipeName].inputs" id="planning-inputs">
-                    <div comm-vessels label="{{getInputName(input, planningRecipeName)}}" proportion="{{input.pct}}" storageqty="50" workshopqty="{{input.onHand}}" critical="20" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
+                    <div comm-vessels label="{{getInputName(input, planningRecipeName)}}" proportion="{{input.pct}}" storageqty="{{input.componentOnHand}}" workshopqty="{{input.productOnHand}}" critical="{{input.componentCritical}}" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
                 </div>
 
                 <div id="planning-container" class="planning-container">
@@ -67,7 +62,7 @@
             <div class="tab-pane" id="tab2">
                 <div class='row-fluid' id='productionInputs'>
                     <div ng-repeat='input in recipes[productionRecipeName].inputs' class='span{{inputSpanType()}}'>
-                        <div cylinder type='input' label='{{getInputName(input, productionRecipeName)}}' proportion='{{input.pct}}' having='{{input.onHand}}' critical='{{input.critical}}' accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
+                        <div cylinder type='input' label='{{getInputName(input, productionRecipeName)}}' proportion='{{input.pct}}' having='{{input.productOnHand}}' critical='{{input.productCritical}}' accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
                         <div class='arrow-input'></div>
                     </div>
                 </div>
@@ -92,6 +87,23 @@
                     <form ng-submit="productionExecute()">
                           <input class='btn btn-default btn-lg' type='submit' value="{{loading && 'Загрузка...' || 'Пуск'}}" ng-disabled="executeButtonDisabled()">
                     </form>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab3">
+                <div id="items-catalog-container">
+                    <div id="items-catalog-body">
+                        <div id="sorting">
+                            <span>Сортировать:</span> 
+                            <a class="btn btn-default disabled btn-primary" href="#item-name">Наименование</a>
+                            <a class="btn btn-default" href="#group-name">Группа</a>
+                            <a class="btn btn-default" href="#group-type">Тип группы</a>
+                            <a class="btn btn-default" href="#item-type">Тип</a>
+                            <a class="btn btn-default" href="#item-uom">Единица измерения</a>
+                        </div>
+                        <div id="items-catalog">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
