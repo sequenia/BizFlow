@@ -72,7 +72,7 @@ function PlannerItems(options)
             var oldValue = _this.vessels[key].qty;
             var tubeValue = _this.vessels[key].tubeValue;
             _this.vessels[key].qty = roundingTruncate(onePiece * _this.vessels[key].proportion, _this.vessels[key].accuracy, _this.vessels[key].rounding);
-            if(_this.vessels[key].qty > _this.vessels[key].workshopMax)
+            /*if(_this.vessels[key].qty > _this.vessels[key].workshopMax)
             {
                 _this.vessels[key].workshopMax = _this.vessels[key].qty * 4;
             }
@@ -83,7 +83,7 @@ function PlannerItems(options)
             if( _this.vessels[key].workshopMax <  _this.vessels[key].maxLimit)
             {
                  _this.vessels[key].workshopMax =  _this.vessels[key].maxLimit;
-            }
+            }*/
             if(_this.vessels[key].qty > _this.vessels[key].onWorkshop)
             {
                 var sign = 0;
@@ -181,7 +181,7 @@ function PlannerItems(options)
     // Стиль подписи количества на складе производства после планирования
     this.workshopNow = function(label)
     {
-        var pct = 100 - 100 * _this.vessels[label].qty / _this.vessels[label].workshopMax;
+        var pct = (100 - 100 * _this.vessels[label].qty / _this.vessels[label].workshopMax).limit(0, 100);
         return {'top': pct + '%'};
     };
 }

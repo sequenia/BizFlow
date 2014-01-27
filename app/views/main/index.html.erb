@@ -16,22 +16,17 @@
         <div class="tab-content tab-body">
             <div class="tab-pane active" id="tab1">
 
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="planning-header"></div>
-                        <div class="planning-store-label">
-                            <div><h5>Склад</h5></div>
-                        </div>
-                        <div class="planning-workshop-label">
-                            <div><h5>Цех</h5></div>
-                        </div>
+                <div class="store-workshop-container">
+                    <div class="store-all-container">
+                        <span class="store-workshop-label">Склад</span>
                     </div>
-                </div>
-
-                <br/>
-
-                <div ng-repeat="input in recipes[planningRecipeName].inputs" id="planning-inputs">
-                    <div comm-vessels label="{{getInputName(input, planningRecipeName)}}" proportion="{{input.pct}}" storageqty="{{input.componentOnHand}}" workshopqty="{{input.productOnHand}}" critical="{{input.componentCritical}}" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
+                    <div class="workshop-all-container">
+                        <span class="store-workshop-label">Цех</span>
+                    </div>
+                    <br/>
+                    <div ng-repeat="input in recipes[planningRecipeName].inputs" id="planning-inputs">
+                        <div comm-vessels label="{{getInputName(input, planningRecipeName)}}" proportion="{{input.pct}}" storageqty="{{input.componentOnHand}}" workshopqty="{{input.productOnHand}}" critical="{{input.componentCritical}}" accuracy="{{input.accuracy}}" rounding="{{input.rounding}}" uom="{{input.UOM}}"></div>
+                    </div>
                 </div>
 
                 <div id="planning-container" class="planning-container">
@@ -43,14 +38,14 @@
                 </div>
 
                 <div class="planning-selecter">
-                    <h4><b>Продукт:</b></h4>
+                    <div class="recipe-submit-label">Рецепт:</div>
                     <select ng-model='planningRecipeName' style='width: 85%'>
                         <option ng-repeat='recipe in recipes'>{{recipe.name}}</option>
                     </select>
                 </div>
 
                 <div class="planning-submit">
-                    <h4><b>Действия:</b></h4>
+                    <div class="recipe-submit-label">Действия:</div>
                     <div class='submit-container'>
                         <form ng-submit="planningExecute()" style='margin-bottom: 10px;'>
                               <input class='btn btn-default btn-lg' type='submit' value="{{loading && 'Загрузка...' || 'Пуск'}}" ng-disabled="executeButtonDisabled()">
@@ -69,7 +64,7 @@
 
                 <div class='row-fluid mixer-body'>
                     <div class='center-div'>
-                        <h2><b>Операция:</b></h2>
+                        <h2>Рецепт:</h2>
                         <select ng-model='productionRecipeName'>
                             <option ng-repeat='recipe in recipes'>{{recipe.name}}</option>
                         </select>

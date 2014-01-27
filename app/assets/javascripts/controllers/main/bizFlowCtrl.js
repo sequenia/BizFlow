@@ -23,7 +23,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
         get:  'GET',
         post: 'POST'
     };
-    $scope.url            = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8'; 
+    $scope.url            = 'http://test-bmp.tk/bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8&module=production'; 
     $scope.loading        = true;
 	$scope.cylinder       = new CylinderItems();
 	$scope.planner        = new PlannerItems();
@@ -187,8 +187,8 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 			break;
 		}
 
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            if(!$scope.catalogIsSorted)
+        $('a[id="catalog-button"]').on('shown.bs.tab', function (e) {
+            if(!$scope.catalogIsSorted && e.target)
             {
                 var sortName = $('#sorting').find(".disabled").first().attr('href').slice(1);
                 $('#items-catalog').isotope({ sortBy : sortName });

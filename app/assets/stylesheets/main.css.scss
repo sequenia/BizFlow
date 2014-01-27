@@ -14,7 +14,6 @@ body {
 }
 
 input[type="text"] {
-	font-weight: bold; 
 	font-size: 2.0em;
 	color: #00c;
 	text-align: center;
@@ -26,7 +25,9 @@ input[type="text"] {
 .history-body,
 .history-recipe-true,
 .history-recipe-false,
-.planning-history-body {
+.planning-history-body,
+.store-all-container,
+.workshop-all-container {
 	-webkit-border-radius:6px;
 	-moz-border-radius:5px;
 	border-radius:6px;
@@ -135,7 +136,6 @@ input[type="text"] {
 }
 
 .cylinder-labels-oum {
-	font-weight: bold;
 	margin-left: 1.2em;
 	margin-bottom: -0.6em;
 	color: #4866FF;
@@ -180,6 +180,7 @@ input[type="text"] {
 	width: 25%;
 	margin-left: -99%;
 	position: relative;
+	margin-top: 1em;
 }
 
 .planning-submit,
@@ -188,11 +189,11 @@ input[type="text"] {
 	width: 25%;
 	margin-left: -25%;
 	position: relative;
+	margin-top: 1em;
 }
 
 #items-catalog-container span {
   font-size: 1.3em;
-  font-weight: bold;
   opacity: 0.9;
 }
 
@@ -242,7 +243,6 @@ input[type="text"] {
 .group-name,
 .group-type {
   color: #212121;
-  font-weight: bold;
   opacity: 0.7;
   margin-bottom: 0em;
 }
@@ -260,4 +260,37 @@ input[type="text"] {
 
 #sorting {
   margin-bottom: 0.5em;
+}
+
+.store-workshop-container {
+	position: relative;
+}
+
+.store-all-container {
+	position: absolute;
+	width: 27%; 
+	height: 100%; 
+	left: -1%;
+	background-color: #F7F7F7;
+  	border: 1px solid #B3B3B3;
+  	opacity: 0.5;
+}
+
+.workshop-all-container {
+	position: absolute; 
+	width: 27%;
+	height: 100%; 
+	background-color: #FAFAFA;
+  	border: 1px solid #B3B3B3;
+	left: 73%;
+	opacity: 0.5;
+}
+
+.store-workshop-label {
+	font-size: 1.1em;
+}
+
+.recipe-submit-label {
+	margin: 0.3em;
+	font-size: 1.3em;
 }
