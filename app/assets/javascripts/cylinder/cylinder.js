@@ -206,7 +206,7 @@ function CylinderDirective($compile)
                 function initializeHover() 
 			    {
 			        isHovering = false;
-			        var span = $(element).find('#qty');
+			        var span = $(element).find('#grad-cylinder');
 			        span.bind("mouseenter", function () { isHovering = true;  updateCursor(); });
 			        span.bind("mouseleave", function () { isHovering = false; updateCursor(); });
 			    }

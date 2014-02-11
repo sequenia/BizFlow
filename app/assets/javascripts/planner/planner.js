@@ -354,7 +354,7 @@ function PlanningProductDirective($compile)
                 function initializeHover() 
                 {
                     isHovering = false;
-                    var span = $(element).find('#qty');
+                    var span = $(element).find('#planning-body');
                     span.bind("mouseenter", function () { isHovering = true;  updateCursor(); });
                     span.bind("mouseleave", function () { isHovering = false; updateCursor(); });
                 }

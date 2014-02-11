@@ -27,7 +27,8 @@ input[type="text"] {
 .history-recipe-false,
 .planning-history-body,
 .store-all-container,
-.workshop-all-container {
+.workshop-all-container,
+.production-items-container {
 	-webkit-border-radius:6px;
 	-moz-border-radius:5px;
 	border-radius:6px;
@@ -51,7 +52,6 @@ input[type="text"] {
 	background: #8785FF;
 	font-size: 12px;
 	z-index: 1;
-	margin-top: -1.2em;
 	margin-bottom: 1.2em;
 }
 
@@ -223,19 +223,33 @@ input[type="text"] {
 }
 
 #items-catalog {
-  background-color: #F7F7F7;
-  border: 1px solid #B3B3B3;
+	background-color: #FAFAFA;
+  	border: 1px solid #CCCCCC;
 }
 
 .item-card {
-  background-color: #C8C8C8;
+  background-color: #DEDEDE;
   border: 1px solid #B3B3B3;
-  -webkit-box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
-  -moz-box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
-  box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
   padding: 0.5em;
   margin: 0.5em;
   width: 13.3em;
+
+  -webkit-transition: all 0.1s ease;
+  -moz-transition: all 0.1s ease;
+  -o-transition: all 0.1s ease;
+  transition: all 0.1s ease;
+}
+
+.item-card:hover {
+  -webkit-box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
+  -moz-box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
+  -o-box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
+  box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
+
+  -webkit-transform: scale(1.05);
+  -moz-transform: scale(1.05);
+  -o-transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .item-uom,
@@ -293,4 +307,9 @@ input[type="text"] {
 .recipe-submit-label {
 	margin: 0.3em;
 	font-size: 1.3em;
+}
+
+.production-items-container {
+	background-color: #FAFAFA;
+  	border: 1px solid #CCCCCC;
 }
