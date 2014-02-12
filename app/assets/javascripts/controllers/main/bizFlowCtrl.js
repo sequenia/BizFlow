@@ -39,21 +39,6 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	function init()
 	{
 		executeQuery($scope.methods.get, $scope.url, "", initializeCallback, errorCallback);
-        /*executeQuery($scope.methods.post, 
-                     "http://192.168.0.88:8080/bmp/j_spring_security_check", 
-                     "j_username=test&j_password=test", 
-                     function (data, status)
-                     {
-                         console.log("Request was successful");
-                         console.log(data);
-                         console.log(status);
-                     }, 
-                     function (data, status)
-                     {
-                         console.log("Error");
-                         console.log(data);
-                         console.log(status);
-                     });*/
 	}
 
     function isotopeInit()
