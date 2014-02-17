@@ -375,8 +375,13 @@ function HistoryDirective($compile)
             		for(var label in history.inputs)
             		{
             			tpl = $compile( '<div class="span' + $scope.inputHistorySpanType(history.recipeName) + '">' +
-            								'<div class="history-body"><h4>' + label + '</h4><h4>' + history.inputs[label].qty + ' ' + history.inputs[label].uom + '</h4></div>' +
-            								'<div class="arrow-input"></div>' + 
+            								'<div class="history-body circle-border">' +
+            								    '<ul>' +
+                                                    '<li>' + label + '</li>' +
+                                                    '<li>' + history.inputs[label].qty + ' ' + history.inputs[label].uom  + '</li>' +
+                                                '</ul>' +
+                                            '</div>' +
+                                            '<div class="arrow-input"></div>' + 
             							'</div>')($scope);
             			$(element).find("#inputs").append(tpl);
             		}
@@ -384,14 +389,21 @@ function HistoryDirective($compile)
             		{
             			tpl = $compile( '<div class="span' + $scope.outputHistorySpanType(history.recipeName) + '">' +
             								'<div class="arrow-output"></div>' + 
-            								'<div class="history-body"><h4>' + label + '</h4><h4>' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</h4></div>' +
+            								'<div class="history-body circle-border">' +
+                                                '<ul>' +
+                                                    '<li>' + label + '</li>' +
+                                                    '<li>' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</li>' +
+                                                '</ul>' +
+                                            '</div>' +
             							'</div>')($scope);
             			$(element).find("#outputs").append(tpl);
             		}
-            		tpl = $compile( '<div class="span12 history-recipe-' + $scope.orderSuccess(history) + '">' +
+            		tpl = $compile( '<div class="span12 circle-border history-recipe-' + $scope.orderSuccess(history) + '">' +
             							'<h3>Операция: ' + history.recipeName + '</h3>' +
-            							'<h4>Дата: ' + history.date + '</h4>' +
-            							'<h4>' + history.result + '</h4>' +
+                                        '<ul>' +
+                                            '<li>Дата: ' + history.date + '</li>' +
+                                            '<li>' + history.result + '</li>' +
+                                        '</ul>' +
 	                				'</div>')($scope);
             		$(element).find("#operation").append(tpl);
         			break;
@@ -413,16 +425,16 @@ function HistoryDirective($compile)
 				        };
 				        onWorkshopQty = roundingTruncate(onWorkshopQty, history.inputs[label].accuracy, history.inputs[label].rounding);
             			tpl = $compile( '<div class="row-fluid">' +
-            								'<div class="span4 planning-history-body">' +
+            								'<div class="span4 planning-history-body circle-border">' +
             									'<div class="arrow-planning"></div>' +
-            									'<span><h4>Остаток на складе: ' + leftCount + ' ' + history.inputs[label].uom + '</h4></span>' +
+            									'<span>Остаток на складе: ' + leftCount + ' ' + history.inputs[label].uom + '</span>' +
             								'</div>' +
-            								'<div class="span4 planning-history-body">' +
+            								'<div class="span4 planning-history-body circle-border">' +
             									'<div class="arrow-planning"></div>' +
-            									'<span><h4>Взято со склада ' + label + ': ' + orderQty + ' ' + history.inputs[label].uom + '</h4></span>' +
+            									'<span>Взято со склада ' + label + ': ' + orderQty + ' ' + history.inputs[label].uom + '</span>' +
             								'</div>' +
-            								'<div class="span4 planning-history-body">' +
-            									'<span><h4>В производстве: ' + onWorkshopQty + ' ' + history.inputs[label].uom + '</h4></span>' +
+            								'<div class="span4 planning-history-body circle-border">' +
+            									'<span>В производстве: ' + onWorkshopQty + ' ' + history.inputs[label].uom + '</span>' +
             								'</div>' +
             							'</div>')($scope);
             			$(element).find("#history").append(tpl);
@@ -430,10 +442,12 @@ function HistoryDirective($compile)
             		for(var label in history.outputs)
             		{
             			tpl = $compile( '<div class="row-fluid" id="product">' +
-             								'<div class="span12 history-recipe-' + $scope.orderSuccess(history) + '" style="margin-bottom: 1em;">' +
-             									'<span><h4>Запланировано ' + label + ': ' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</h4></span>' +
-                                                '<h4>Дата: ' + history.date + '</h4>' +
-                                                '<h4>' + history.result + '</h4>' +
+             								'<div class="span12 circle-border history-recipe-' + $scope.orderSuccess(history) + '">' +
+                                                '<h3>Запланировано: ' + label + ': ' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</h3>' +
+                                                '<ul>' +
+                                                    '<li>Дата: ' + history.date + '</li>' +
+                                                    '<li>' + history.result + '</li>' +
+                                                '</ul>' +
             								'</div>' +
             							'</div>')($scope);
             			$(element).find("#history").append(tpl);
@@ -442,7 +456,7 @@ function HistoryDirective($compile)
         	}
         },
 
-        template:   '<div class="history" id="history">' +
+        template:   '<div class="history circle-border" id="history">' +
     				'</div>'
     }
 }

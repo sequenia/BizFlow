@@ -72,18 +72,6 @@ function PlannerItems(options)
             var oldValue = _this.vessels[key].qty;
             var tubeValue = _this.vessels[key].tubeValue;
             _this.vessels[key].qty = roundingTruncate(onePiece * _this.vessels[key].proportion, _this.vessels[key].accuracy, _this.vessels[key].rounding);
-            /*if(_this.vessels[key].qty > _this.vessels[key].workshopMax)
-            {
-                _this.vessels[key].workshopMax = _this.vessels[key].qty * 4;
-            }
-            if(_this.vessels[key].qty < _this.vessels[key].workshopMax / 4)
-            {
-                _this.vessels[key].workshopMax = _this.vessels[key].qty;
-            }
-            if( _this.vessels[key].workshopMax <  _this.vessels[key].maxLimit)
-            {
-                 _this.vessels[key].workshopMax =  _this.vessels[key].maxLimit;
-            }*/
             if(_this.vessels[key].qty > _this.vessels[key].onWorkshop)
             {
                 var sign = 0;
@@ -242,19 +230,26 @@ function CommVesselsDirective($compile)
 
                 tpl = $compile('<div ng-style="planner.storageHaving(\'' + label + '\')" class="storage-coloring" id="storage-coloring"></div>')($scope);
                 $(element).find('#storage').append(tpl);
+                //$(element).find('#storage').hover(
+                //    function(){
+                //        $(".store-all-container").css("border", "1px solid #B3B3B3");
+                //    },
+                //    function(){
+                //        $(".store-all-container").css("border", "1px dashed #B3B3B3");
+                //});
 
                 tpl = $compile('<div ng-style="planner.workshopHaving(\'' + label + '\')" class="storage-coloring" id="workshop-coloring"></div>')($scope);
                 $(element).find('#workshop').append(tpl);
 
                 if(onStorage !== undefined)
                 {
-                    tpl = $compile('<div class="storage-having" id="storage-having"></div>')($scope);
+                    tpl = $compile('<div class="storage-having storage-label" id="storage-having"></div>')($scope);
                     $(element).find('#storage').append(tpl);
 
                     tpl = $compile('<div class="planner-labels-dash"></div><div class="planner-labels-having">{{planner.vessels["' + label + '"].onStorage}}</div>')($scope);
                     $(element).find('#storage-having').append(tpl);
 
-                    tpl = $compile('<div ng-style="planner.storageLeft(\'' + label + '\')" class="storage-left" id="storage-left"></div>')($scope);
+                    tpl = $compile('<div ng-style="planner.storageLeft(\'' + label + '\')" class="storage-left storage-label" id="storage-left"></div>')($scope);
                     $(element).find('#storage').append(tpl);
 
                     tpl = $compile('<div class="planner-labels-left">{{planner.getLeftQty("' + label + '")}}</div>')($scope);
@@ -262,7 +257,7 @@ function CommVesselsDirective($compile)
 
                     if(critical)
                     {
-                        tpl = $compile('<div ng-style="planner.critical(\'' + label + '\')" class="storage-critical" id="storage-critical"></div>')($scope);
+                        tpl = $compile('<div ng-style="planner.critical(\'' + label + '\')" class="storage-critical storage-label" id="storage-critical"></div>')($scope);
                         $(element).find('#storage').append(tpl);
 
                         tpl = $compile('<div class="planner-labels-dash-red"></div><div class="planner-labels-critical">{{planner.vessels["' + label + '"].critical}}</div>')($scope);
@@ -270,13 +265,20 @@ function CommVesselsDirective($compile)
                     }
                 }
 
-                tpl = $compile('<div ng-style="planner.onWorkshop(\'' + label + '\')" class="storage-critical" id="on-workshop"></div>')($scope);
+                tpl = $compile('<div ng-style="planner.onWorkshop(\'' + label + '\')" class="storage-critical storage-label" id="on-workshop"></div>')($scope);
                 $(element).find('#workshop').append(tpl);
+                //$(element).find('#workshop').hover(
+                //    function(){
+                //        $(".workshop-all-container").css("border", "1px solid #B3B3B3");
+                //    },
+                //    function(){
+                //        $(".workshop-all-container").css("border", "1px dashed #B3B3B3");
+                //});
 
                 tpl = $compile('<div class="planner-labels-dash"></div><div class="planner-labels-having">{{planner.vessels["' + label + '"].onWorkshop}}</div>')($scope);
                 $(element).find('#on-workshop').append(tpl);
 
-                tpl = $compile('<div ng-style="planner.workshopNow(\'' + label + '\')" class="storage-left" id="workshop-now"></div>')($scope);
+                tpl = $compile('<div ng-style="planner.workshopNow(\'' + label + '\')" class="storage-left storage-label" id="workshop-now"></div>')($scope);
                 $(element).find('#workshop').append(tpl);
 
                 tpl = $compile('<div class="planner-labels-left">{{planner.getCurrentQty("' + label + '")}}</div>')($scope);
@@ -374,9 +376,7 @@ function PlanningProductDirective($compile)
                 {
                     touchDidGoDown: function (touches) 
                     {
-                        $(document).find('.storage-having').css('opacity', '1.0');
-                        $(document).find('.storage-critical').css('opacity', '1.0');
-                        $(document).find('.storage-left').css('opacity', '1.0');
+                        $(document).find('.storage-label').css('opacity', '1.0');
                         $('.hand-input').blur();
                         valueAtMouseDown = $scope.planner.getOutputQty(label);
                         isDragging = true;
@@ -402,9 +402,7 @@ function PlanningProductDirective($compile)
                     
                     touchDidGoUp: function (touches) 
                     {
-                        $(document).find('.storage-having').css('opacity', '0.3');
-                        $(document).find('.storage-critical').css('opacity', '0.3');
-                        $(document).find('.storage-left').css('opacity', '0.3');
+                        $(document).find('.storage-label').css('opacity', '0.3');
                         isDragging = false;
                         isAnyAdjustableNumberDragging = false;
                         updateCursor();

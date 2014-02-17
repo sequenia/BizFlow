@@ -37,7 +37,7 @@
 .storage {
 	float: left;
 	width: 25%;
-	margin-left: -100%;
+	margin-left: -99%;
 	background-color: #DADAFF;
 	height: 5em;
 	position: relative;
@@ -56,9 +56,7 @@
 	right: 0;
 }
 
-.storage-having,
-.storage-critical,
-.storage-left {
+.storage-label {
 	margin-top: -0.7em;
 	opacity: 0.3;
 }
@@ -145,7 +143,6 @@
 
 .planner-labels-left {
 	width: 100%;
-	margin-left: 45%;
 	padding: .2em .3em .3em;
 	font-weight: bold;
 	line-height: 1;
@@ -161,9 +158,8 @@
     z-index: 1;
     position: absolute;
     content:'';
-    width: 100%;
     height: 0;
-    right: 50%;
+    right: 95%;
     bottom: 0.05em;
 	border-style: solid;
 	border-width: 0.75em 1.4em 0.75em 0;

@@ -1,10 +1,11 @@
 BizFlow::Application.routes.draw do
-    get "main/index"
+  post "biz_flow/home"
+  get  "biz_flow/home"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'main#index'
+  root 'biz_flow#home'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
