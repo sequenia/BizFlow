@@ -12,7 +12,7 @@ class BizFlowController < ApplicationController
   			cookies[:crypto_id] = session[:user_id] * session[:random_number]
   		else
   			cookies.delete :crypto_id
-  			reset_session
+  			reset_session 
   			#redirect_to "http://cn.ru/"
   		end
     # Если сессии не было
