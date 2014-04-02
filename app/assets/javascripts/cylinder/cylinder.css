@@ -1,137 +1,206 @@
-.grad-cylinder,
-.cylinder-coloring,
-.cylinder-having {
-	-webkit-border-radius:6px; 
-	-moz-border-radius:5px; 
-  	border-radius:6px;
-	-khtml-border-radius:10px;
-}
-
 .grad-cylinder {
 	text-align: center;
 	min-width: 1em;
 	min-height: 1em;
 	font-size: 14px;
 	position: relative;
-	margin: 1em;
+	margin-bottom: 1em;
+	border: 1px solid #FFFFFF;
+}
+
+.grad-cylinder:hover .cylinder-input-content {
+	color: #2480A4;
+}
+
+.grad-cylinder:hover .cylinder-output-content {
+	color: #E0F2FF;
 }
 
 .qty-container {
-	margin-top: 2em;
-	margin-bottom: 1.0em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	font-size: 1.2em;
 }
 
 .cylinder-label {
-	font-size: 1.5em;
+	font-size: 1.2em;
 	margin-top: 0.3em;
 }
 
 .cylinder-body {
 	position: relative;
-	padding: 0.5em;
+	display: block;
 	z-index: 1;
 }
 
+.cylinder-input-content {
+	color: #25B3EB;
+	background-color: #ffffff; 
+	display: inline-block;
+	border: 1px solid #25B3EB;
+	padding: 0.4em;
+	margin-bottom: 3.0em;
+	margin-top: 3.0em;
+	margin-left: 1.0em;
+	margin-right: 1.0em;
+	position: relative;
+}
+
+.cylinder-output-content {
+	color: #FFFFFF;
+	display: inline-block;
+	position: relative;
+	font-size: 1.4em;
+	margin-bottom: 0.2em;
+	margin-top: 0.2em;
+}
+
 .input-cylinder {
-	background-color: #DADAFF;
+	background-color: #FFFFFF;
 }
 
 .output-cylinder {
-	background-color: #FFE7CE;
+	background-image: linear-gradient(90deg, #7ECEF3 0%, #446CE9 25%, #446CE9 25%, #2A53D2 50%, #2A53D2 50%, #446CE9 75%, #446CE9 75%, #7ECEF3 100%);
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	-o-border-radius:6px;
+	border-radius:6px;
 }
 
 .cylinder-value {
-	font-weight: bold; 
-	font-size: 2.0em;
-	color: #00c;
-	border-bottom: 1px dashed #00c;
+	font-size: 1.3em;
+	border-bottom: 1px solid #25B3EB;
 }
 
-.hand-input {
-	font-weight: bold; 
-	font-size: 2.0em;
-	color: #00c;
+.hand-input { 
+	font-size: 1.3em;
+	color: #446CE9;
 	text-align: center;
 	width: 80%;
 	margin-top: -0.3em;
 }
 
-.cylinder-coloring,
-.cylinder-labels {
+.cylinder-coloring {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 }
 
 .cylinder-labels {
-	opacity: 0.3;
-	margin-top: -0.75em;
-	z-index: 3;
+	position: absolute;
+	width: 100%;
+	height: 100%;
 }
 
-.cylinder-labels-having,
-.cylinder-labels-critical {
-	float: left;
-	font-weight: bold;
-	margin-left: 0.2em;
+.slider-body {
+	position: relative;
+}
+
+.slider-container {
+	position: absolute;
+	height: 100%;
+	right: -15px;
+	z-index: 5;
+}
+
+.slider-trunk {
+	position: absolute;
+	display: inline-block;
+	height: 100%;
+	width: 10px;
+	left: 20px;
+	background-color: #EDEDED;
+	border: 1px solid #BDBDBD;
+	text-align: center;
+	box-sizing: border-box;
+
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	border-radius:5px;
+
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.trunk-line {
+	width: 4px;
+	position: relative;
+	height: 100%;
+	background-color: #A7A7A7;
+	border: 1px solid #848484;
+	display: inline-block;
+	box-sizing: border-box;
+
+	-webkit-border-radius:2px;
+	-moz-border-radius:2px;
+	-o-border-radius:2px;
+	border-radius:2px;
 }
 
 .cylinder-labels-having {
-	color: #4866FF;
+	float: right;
+	margin-right: 37px;
 }
 
-.cylinder-labels-critical {
-	color: #FF5555;
-	margin-top: 0.1em;
-}
-
-.cylinder-labels-dash {
-	float: left;
-	width: 1.3em;
-	height: 0.7em;
-	border-bottom: 2px solid #4866FF;
-	margin-left: 0.2em;
-}
-
-.cylinder-red-dash {
-	border-bottom: 2px solid #FF7777;
+.cylinder-left-label {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	padding-top: 1.0em;
+	padding-bottom: 1.2em;
+	box-sizing: border-box;
 }
 
 .labels-left-container {
-	right: 0;
-	position: absolute;
+	float: right;
+	margin-right: 37px;
+	position: relative;
+	z-index: 6;
 }
 
 .labels-critical-container {
+	border-top: 1px dashed #FF4B4B;
 	position: absolute;
-}
-
-.cylinder-labels-left {
 	width: 100%;
-	padding: .2em .3em .3em;
+}
+
+.slider {
+	width: 50px;
+	height: 30px;
+	margin-top: -10px;
 	font-weight: bold;
-	line-height: 1;
 	color: #ffffff;
-	background-color: #999999;
 	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
+	background-color: #999999;
 	border-radius: .25em;
+	border: 1px solid #717171;
+	float: right;
+	box-sizing: border-box;
 }
 
-.cylinder-labels-left:before {
-    z-index: 1;
-    position: absolute;
-    content:'';
-    height: 0;
-    right: 95%;
-    bottom: 0.05em;
-	border-style: solid;
-	border-width: 0.75em 1.4em 0.75em 0;
-	border-color: transparent rgb(153, 153, 153) transparent transparent;
+.slider:hover {
+	background-color: #848484;
+	border: 1px solid #5A5A5A;
 }
 
-.cylinder-having {
+.slider:active {
+	-moz-transform: scale(0.95);
+    -ms-transform: scale(0.95);
+    -webkit-transform: scale(0.95);
+    -o-transform: scale(0.95);
+    transform: scale(0.95);
+}
+
+.cylinder-having-blue {
+	background-image: linear-gradient(90deg, #7ECEF3 0%, #446CE9 25%, #446CE9 25%, #2A53D2 50%, #2A53D2 50%, #446CE9 75%, #446CE9 75%, #7ECEF3 100%);
+	position: relative;
+	height: 100%;
+}
+
+.cylinder-having-red {
+	background-color: #FF1E1E;
+	position: relative;
 	height: 100%;
 }
 
@@ -139,4 +208,44 @@
 	cursor: pointer;
 	cursor: move;
 	cursor: col-resize;
+}
+
+.SlideVertical {
+	cursor: pointer;
+	cursor: move;
+	cursor: row-resize;
+}
+
+.minus {
+	position: absolute;
+	left: 0;
+	height: 100%;
+	width: 80px;
+	background-image: url("/assets/minus.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: 50% 50%;
+	cursor: pointer;
+}
+
+.minus:active {
+	height: 90%;
+	top: 5%;
+}
+
+.plus {
+	position: absolute;
+	right: 0;
+	height: 100%;
+	width: 80px;
+	background-image: url("/assets/plus.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: 50% 50%;
+	cursor: pointer;
+}
+
+.plus:active {
+	height: 90%;
+	top: 5%;
 }

@@ -1,6 +1,11 @@
 $(document).ready(function()
 {
 	angular.bootstrap(document.getElementById('bizflow'), ['BizFlowApp']);
+
+    $('#tab4').find('input[type="radio"]').change(function(event) {
+        $('body').removeClass();
+        $('body').addClass($(this).val());
+    });
 });
 
 var ResultStatus = 
@@ -134,8 +139,8 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
         });
 
         $('#sorting a').click(function(element){
-            $('#sorting a').removeClass("disabled btn-primary");
-            $(this).addClass("disabled btn-primary");
+            $('#sorting a').removeClass("active");
+            $(this).addClass("active");
             var sortName = $(this).attr('href').slice(1);
             $('#items-catalog').isotope({ sortBy : sortName });
             return false;
@@ -196,7 +201,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
                 $('#items-catalog').isotope({ sortBy : sortName });
                 $scope.catalogIsSorted = true;
             }
-        })
+        });
 
         isotopeInit();
 
@@ -330,8 +335,13 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 
 	$scope.executeButtonDisabled = function()
 	{
-		return $scope.loading;
+		return ($scope.loading || !$scope.productionRecipeName);
 	};
+
+    $scope.planningButtonDisabled = function()
+    {
+        return ($scope.loading || !$scope.planningRecipeName);
+    };
 
 	$scope.outputHistorySpanType = function(recipeName)
 	{
@@ -344,6 +354,14 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
 	{
 		return (old.status == ResultStatus.OK || old.status == ResultStatus.OK_EXTRA);
 	};
+
+    $scope.setProductionRecipeName = function(name) {
+        $scope.productionRecipeName = name;
+    };
+
+    $scope.setPlanningRecipeName = function(name) {
+        $scope.planningRecipeName = name;
+    };
 };
 
 bizflow.controller("bizFlowCtrl", bizFlowCtrl);
@@ -422,15 +440,13 @@ function HistoryDirective($compile)
 				        if(onWorkshopQty < history.inputs[label].onWorkshop) 
 				        {
 				        	onWorkshopQty = history.inputs[label].onWorkshop;
-				        };
+				        }
 				        onWorkshopQty = roundingTruncate(onWorkshopQty, history.inputs[label].accuracy, history.inputs[label].rounding);
-            			tpl = $compile( '<div class="row-fluid">' +
+            			tpl = $compile( '<div class="row-fluid planning-history-row">' +
             								'<div class="span4 planning-history-body circle-border">' +
-            									'<div class="arrow-planning"></div>' +
             									'<span>Остаток на складе: ' + leftCount + ' ' + history.inputs[label].uom + '</span>' +
             								'</div>' +
             								'<div class="span4 planning-history-body circle-border">' +
-            									'<div class="arrow-planning"></div>' +
             									'<span>Взято со склада ' + label + ': ' + orderQty + ' ' + history.inputs[label].uom + '</span>' +
             								'</div>' +
             								'<div class="span4 planning-history-body circle-border">' +

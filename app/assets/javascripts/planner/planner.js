@@ -109,6 +109,7 @@ function PlannerItems(options)
     this.storageHaving = function(label)
     {
         var pctLeft = (_this.vessels[label].onStorage === undefined) ? 100 : 100 - 100 * (_this.vessels[label].qty - _this.vessels[label].onWorkshop) / _this.vessels[label].onStorage;
+        if(pctLeft > 100) pctLeft = 100;
         if(pctLeft >= 0)
         {
             if(_this.vessels[label].critical)
@@ -116,14 +117,14 @@ function PlannerItems(options)
                 var criticalPct = 100 * _this.vessels[label].critical / _this.vessels[label].onStorage;
                 if(criticalPct > pctLeft)
                 {
-                    return {'background-image': 'linear-gradient(0deg, #FFDDDD 0%, #FFDDDD ' + pctLeft + '%, #EFEFFF ' + pctLeft + '%, #EFEFFF 100%)'};
+                    return {height: pctLeft + '%', 'background-color': '#FF1E1E'};
                 }
             }
-            return {'background-image': 'linear-gradient(0deg, #DADAFF 0%, #DADAFF ' + pctLeft + '%, #EFEFFF ' + pctLeft + '%, #EFEFFF 100%)'};
+            return {height: pctLeft + '%', 'background-color': '#446CE9'};
         }
         else
         {
-            return {'background-color': '#FFDDDD'};
+            return {height: 100 + '%', 'background-color': '#FF1E1E'};
         }
     };
 
@@ -131,18 +132,19 @@ function PlannerItems(options)
     this.workshopHaving = function(label)
     {
         var pctLeft = 100 * _this.vessels[label].qty / _this.vessels[label].workshopMax;
+        if(pctLeft > 100) pctLeft = 100;
         if(pctLeft >= 0)
         {
             var criticalPct = 100 * _this.vessels[label].onWorkshop / _this.vessels[label].workshopMax;
             if(criticalPct > pctLeft)
             {
-                return {'background-image': 'linear-gradient(0deg, #DADAFF 0%, #DADAFF ' + pctLeft + '%, #FFE7CE ' + pctLeft + '%, #FFE7CE 100%)'};
+                return {height: pctLeft + '%', 'background-color': '#FFBC71'};
             }
-            return {'background-image': 'linear-gradient(0deg, #FFCF9B 0%, #FFCF9B ' + pctLeft + '%, #FFE7CE ' + pctLeft + '%, #FFE7CE 100%)'};
+            return {height: pctLeft + '%', 'background-color': '#FF9826'};
         }
         else
         {
-            return {'background-color': '#C8FFB9'};
+            return {height: 100 + '%', 'background-color': '#FF1E1E'};
         }
     };
 
@@ -230,13 +232,6 @@ function CommVesselsDirective($compile)
 
                 tpl = $compile('<div ng-style="planner.storageHaving(\'' + label + '\')" class="storage-coloring" id="storage-coloring"></div>')($scope);
                 $(element).find('#storage').append(tpl);
-                //$(element).find('#storage').hover(
-                //    function(){
-                //        $(".store-all-container").css("border", "1px solid #B3B3B3");
-                //    },
-                //    function(){
-                //        $(".store-all-container").css("border", "1px dashed #B3B3B3");
-                //});
 
                 tpl = $compile('<div ng-style="planner.workshopHaving(\'' + label + '\')" class="storage-coloring" id="workshop-coloring"></div>')($scope);
                 $(element).find('#workshop').append(tpl);
@@ -267,13 +262,6 @@ function CommVesselsDirective($compile)
 
                 tpl = $compile('<div ng-style="planner.onWorkshop(\'' + label + '\')" class="storage-critical storage-label" id="on-workshop"></div>')($scope);
                 $(element).find('#workshop').append(tpl);
-                //$(element).find('#workshop').hover(
-                //    function(){
-                //        $(".workshop-all-container").css("border", "1px solid #B3B3B3");
-                //    },
-                //    function(){
-                //        $(".workshop-all-container").css("border", "1px dashed #B3B3B3");
-                //});
 
                 tpl = $compile('<div class="planner-labels-dash"></div><div class="planner-labels-having">{{planner.vessels["' + label + '"].onWorkshop}}</div>')($scope);
                 $(element).find('#on-workshop').append(tpl);
@@ -322,6 +310,10 @@ function PlanningProductDirective($compile)
                 var accuracy    = (attrs.accuracy    === undefined) ? 2 : parseInt(attrs.accuracy);
                 var min         = (attrs.min         === undefined) ? 0.0 : parseFloat(attrs.min);
 
+                var timeoutId = 0;
+                var mouseTime = 0;
+                var sign = 1;
+
                 if(isNaN(accuracy)) accuracy = 2;
 
                 if(proportion <= 0) proportion = 1.0;
@@ -352,6 +344,44 @@ function PlanningProductDirective($compile)
 
                 tpl = $compile('<span class="planner-value" id="qty">{{planner.outputs["' + label + '"].qty}} ' + uom + '</span>')($scope);
                 $(element).find('#planning-qty').append(tpl);
+
+                function timeoutPlus()
+                {
+                    mouseTime += 100;
+                    if(mouseTime > 500)
+                    {
+                        plus(4);
+                    }
+                }
+
+                function plus(multy) {
+                    var value = $scope.planner.getOutputQty(label) + step * sign * multy;
+                    if(min !== undefined)
+                    {
+                        if(value < min) value = min;
+                    }
+                    $scope.$apply(function() {
+                        $scope.planner.updateOutputQty(label, value);
+                    });
+                }
+
+                $(element).find('.pl-plus').mousedown(function() {
+                    sign = 1;
+                    plus(1);
+                    timeoutId = setInterval(timeoutPlus, 100);
+                }).bind('mouseup mouseleave touchend', function() {
+                    clearInterval(timeoutId);
+                    mouseTime = 0;
+                });
+
+                $(element).find('.pl-minus').mousedown(function() {
+                    sign = -1;
+                    plus(1);
+                    timeoutId = setInterval(timeoutPlus, 100);
+                }).bind('mouseup mouseleave touchend', function() {
+                    clearInterval(timeoutId);
+                    mouseTime = 0;
+                });
 
                 function initializeHover() 
                 {
@@ -402,7 +432,7 @@ function PlanningProductDirective($compile)
                     
                     touchDidGoUp: function (touches) 
                     {
-                        $(document).find('.storage-label').css('opacity', '0.3');
+                        $(document).find('.storage-label').css('opacity', '0.5');
                         isDragging = false;
                         isAnyAdjustableNumberDragging = false;
                         updateCursor();
@@ -454,7 +484,7 @@ function PlanningProductDirective($compile)
                 function initializeDrag()
                 {
                     isDragging = false;
-                    new BVTouchable($(element).find('#planning-body')[0], drag);
+                    new BVTouchable($(element).find('.planning-qty-container')[0], drag);
                 }
                 
                 initializeHover();
@@ -466,11 +496,14 @@ function PlanningProductDirective($compile)
         },
 
         template:   '<div id="planning-body" class="planning-body">' +
-                        '<div id="planning-label" class="planning-label">' +
-                        '</div>' +
-                        '<br/>' +
-                        '<div id="planning-qty" class="planning-qty">' +
+                        '<div class="pl-minus"></div>' +
+                        '<div class="pl-plus"></div>' +
+                        '<div class="planning-qty-container">' +
+                            '<div id="planning-label" class="planning-label">' +
+                            '</div>' +
+                            '<div id="planning-qty" class="planning-qty">' +
+                            '</div>' +
                         '</div>' +
                     '</div>'
-    }
+    };
 }

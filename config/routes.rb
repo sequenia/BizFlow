@@ -7,6 +7,8 @@ BizFlow::Application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'biz_flow#home'
 
+  post 'set_background' => 'biz_flow#set_background', :as => :set_background
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

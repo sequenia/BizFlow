@@ -1,0 +1,9 @@
+var alert = $('#tab4').find('.alert');
+if(alert) {
+	alert.remove();
+}
+
+$('<div class="alert alert-success">' +
+  '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+  '<strong>Сохранено!</strong>' +
+'</div>').insertBefore($('#tab4').find('footer'));

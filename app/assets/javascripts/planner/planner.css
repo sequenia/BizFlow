@@ -16,8 +16,8 @@
 
 .tube {
 	background-image: repeating-linear-gradient(60deg, #E3E3E3 0px, #E3E3E3 0px, #CACACA 0px, #CACACA 0px, #E3E3E3 0px, #E3E3E3 20px, #CACACA 20px, #CACACA 40px);
-	border-top: 1px solid #B3B3B3;
-	border-bottom: 1px solid #B3B3B3;
+	border-top: 2px solid #FFFFFF;
+	border-bottom: 2px solid #B0B0B0;
 	font-size: 1.6em;
 }
 
@@ -25,22 +25,15 @@
 	padding: 0.3em;
 }
 
-.storage,
-.storage-coloring,
-.workshop {
-	-webkit-border-radius:6px; 
-	-moz-border-radius:5px; 
-  	border-radius:6px;
-	-khtml-border-radius:10px;
-}
-
 .storage {
 	float: left;
 	width: 25%;
 	margin-left: -99%;
-	background-color: #DADAFF;
+	background-color: #FFFFFF;
+	border: 1px solid #FFFFFF;
 	height: 5em;
 	position: relative;
+	box-sizing: border-box;
 }
 
 .storage-coloring,
@@ -51,6 +44,10 @@
 	position: absolute;
 }
 
+.storage-coloring {
+	bottom: 0;
+}
+
 .storage-left {
 	position: absolute;
 	right: 0;
@@ -58,7 +55,7 @@
 
 .storage-label {
 	margin-top: -0.7em;
-	opacity: 0.3;
+	opacity: 0.5;
 }
 
 .planner-labels-dash,
@@ -70,11 +67,11 @@
 }
 
 .planner-labels-dash {
-	border-bottom: 2px solid #4866FF;
+	border-bottom: 2px solid #333333;
 }
 
 .planner-labels-dash-red {
-	border-bottom: 2px solid #FF7777;
+	border-bottom: 2px solid #333333;
 }
 
 .planner-labels-having,
@@ -84,47 +81,52 @@
 	margin-left: 0.2em;
 }
 
-.planner-labels-having {
-	color: #4866FF;
-}
-
-.planner-labels-critical {
-	color: #FF7777;
-}
-
 .workshop {
-	background-color: #FFE7CE;
+	background-color: #FFFFFF;
+	border: 1px solid #FFFFFF;
 	float: left;
 	width: 25%;
 	margin-left: -25%;
 	height: 5em;
 	position: relative;
+	box-sizing: border-box;
 }
 
 .planning-body {
+	font-size: 16px;
 	-webkit-border-radius:6px; 
 	-moz-border-radius:5px; 
   	border-radius:6px;
 	-khtml-border-radius:10px;
-	background-color: #E3E3E3;
-	border: 1px solid #B3B3B3;
-	padding: 1em;
+	background-image: linear-gradient(90deg, #7ECEF3 0%, #446CE9 25%, #446CE9 25%, #2A53D2 50%, #2A53D2 50%, #446CE9 75%, #446CE9 75%, #7ECEF3 100%);
+	border: 1px solid #FFFFFF;
+	
 	margin-bottom: 0.5em;
+	position: relative;
+}
+
+.planning-qty-container {
+	padding-top: 0.7em;
+	padding-bottom: 0.7em;
+	padding-left: 80px;
+	padding-right: 80px;
 }
 
 .planner-value {
-	font-weight: bold; 
 	font-size: 2.0em;
-	color: #00c;
-	border-bottom: 1px dashed #00c;
+	color: #FFFFFF;
+	border-bottom: 1px solid #25B3EB;
 }
 
 .planning-label {
 	font-size: 1.4em;
+	color: #FFFFFF;
+	margin-bottom: 0.4em;
 }
 
 .product-label {
-	font-size: 1.2em;;
+	font-size: 1.2em;
+	color: #FFFFFF;
 }
 
 .hand-input {
@@ -132,7 +134,7 @@
 	font-size: 2.0em;
 	color: #00c;
 	text-align: center;
-	width: 80%;
+	width: 60%;
 }
 
 .DragHorizontal {
@@ -147,7 +149,7 @@
 	font-weight: bold;
 	line-height: 1;
 	color: #ffffff;
-	background-color: #999999;
+	background-color: #404040;
 	text-align: center;
 	white-space: nowrap;
 	vertical-align: baseline;
@@ -163,5 +165,39 @@
     bottom: 0.05em;
 	border-style: solid;
 	border-width: 0.75em 1.4em 0.75em 0;
-	border-color: transparent rgb(153, 153, 153) transparent transparent;
+	border-color: transparent #404040 transparent transparent;
+}
+
+.pl-minus {
+	position: absolute;
+	left: 0;
+	height: 100%;
+	width: 80px;
+	background-image: url("/assets/minus.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: 50% 50%;
+	cursor: pointer;
+}
+
+.pl-minus:active {
+	height: 90%;
+	top: 5%;
+}
+
+.pl-plus {
+	position: absolute;
+	right: 0;
+	height: 100%;
+	width: 80px;
+	background-image: url("/assets/plus.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: 50% 50%;
+	cursor: pointer;
+}
+
+.pl-plus:active {
+	height: 90%;
+	top: 5%;
 }

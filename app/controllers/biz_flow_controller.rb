@@ -2,6 +2,7 @@ class BizFlowController < ApplicationController
   skip_before_filter :verify_authenticity_token
 
   def home
+    @back = get_background
   	# Если сессия уже существует
   	if (session[:user_id] && session[:random_number] && cookies[:crypto_id])
   		# Если сессия валидна
@@ -33,5 +34,24 @@ class BizFlowController < ApplicationController
   			#redirect_to "http://test-bmp.tk/"
   		end
   	end
+  end
+
+  def set_background
+    @back = params[:back]
+    if @back
+      cookies[:back] = @back
+    end
+
+    respond_to do |format|
+      format.js { }
+    end
+  end
+
+  def get_background
+    if cookies[:back]
+      return cookies[:back]
+    else
+      return "black"
+    end
   end
 end
