@@ -1,3 +1,487 @@
+<script type="text/javascript">
+
+$(document).ready(function()
+{
+    angular.bootstrap(document.getElementById('bizflow'), ['BizFlowApp']);
+
+    $('#tab4').find('input[type="radio"]').change(function(event) {
+        $('body').removeClass();
+        $('body').addClass($(this).val());
+    });
+});
+
+var ResultStatus = 
+{
+    OK:       1,
+    FAILURE:  2,
+    OK_EXTRA: 3
+};
+
+var bizflow = angular.module("BizFlowApp", []);
+
+var bizFlowCtrl = function($scope, $http, $templateCache)
+{
+    $http.defaults.useXDomain = true;
+    delete $http.defaults.headers.common['X-Requested-With'];
+    $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    $http.defaults.headers.post['Accept'] = 'text/json';
+    $scope.methods  = 
+    {
+        get:  'GET',
+        post: 'POST'
+    };
+
+    $scope.url            = '<%= @host %>bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8&module=production'; 
+    $scope.loading        = true;
+    $scope.cylinder       = new CylinderItems();
+    $scope.planner        = new PlannerItems();
+    $scope.history        = {};
+    $scope.historyLength  = 0;
+    $scope.productionRecipeName = '';
+    $scope.planningRecipeName   = '';
+    $scope.recipes; //= {"Шпатлевка":{"inputs":[{"critical":0,"pct":4.8,"UOM":"кг","onHand":432,"productName":"Мрам - 100"},{"critical":0,"pct":15.4,"UOM":"кг","onHand":1386,"productName":"Химик - 3М"},{"critical":0,"pct":15.9,"UOM":"кг","onHand":1431,"productName":"Загуститель ВС"},{"critical":800,"pct":63.9,"UOM":"кг","onHand":1141,"productName":"ГО-1"}],"itemType":30,"name":"Шпатлевка","outputs":[{"pct":100,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"productionLocation":"Цех"},"Шпат-20кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 20кг"},{"critical":0,"pct":20,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-20кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-20кг"}],"productionLocation":"Цех"},"Просев":{"inputs":[{"critical":0,"pct":80,"UOM":"кг","onHand":800,"productName":"Гипс К"},{"critical":8000,"pct":20,"UOM":"кг","onHand":450,"productName":"Вяж. 1"}],"itemType":20,"name":"Просев","outputs":[{"pct":9,"UOM":"шт","productName":"ГО-2","onHand":220},{"pct":91,"UOM":"шт","productName":"ГО-1","onHand":1141}],"productionLocation":"Цех"},"Шпат-25кг":{"inputs":[{"critical":0,"pct":25,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 25кг"}],"itemType":40,"name":"Шпат-25кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-25кг"}],"productionLocation":"Цех"},"Шпат-10кг":{"inputs":[{"critical":0,"pct":10,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"},{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 10кг"}],"itemType":40,"name":"Шпат-10кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-10кг"}],"productionLocation":"Цех"},"Шпат-5кг":{"inputs":[{"critical":0,"pct":1,"UOM":"шт","onHand":100,"productName":"Мешок 5кг"},{"critical":0,"pct":5,"UOM":"кг","onHand":1000,"productName":"Шпатлевка"}],"itemType":40,"name":"Шпат-5кг","outputs":[{"pct":1,"UOM":"шт","onHand":0,"productName":"Шпат-5кг"}],"productionLocation":"Цех"}};
+    $scope.catalogIsSorted = false;
+
+    init();
+
+    function init()
+    {
+        executeQuery($scope.methods.get, $scope.url, "", initializeCallback, errorCallback);
+    }
+
+    function isotopeInit()
+    {
+        var items = 
+        {
+            'Имя 1': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Производимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 1'
+            },
+            'Имя 2': 
+            {
+                'groupName': 'Группа 3',
+                'groupType': 'Производимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 3': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Непроизводимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 4': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Непроизводимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 3'
+            },
+            'Имя 5': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Производимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 2'
+            },
+            'Имя 6': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Непроизводимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 7': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Производимый',
+                'uom':       'Мл',
+                'itemType':  'Тип 1'
+            },
+            'Имя 8': 
+            {
+                'groupName': 'Группа 2',
+                'groupType': 'Производимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 3'
+            },
+            'Имя 9': 
+            {
+                'groupName': 'Группа 1',
+                'groupType': 'Непроизводимый',
+                'uom':       'Кг',
+                'itemType':  'Тип 1'
+            }
+        };
+
+        $('#items-catalog').isotope({
+            itemSelector: '.catalog-item',
+            layoutMode:   'fitRows',
+            getSortData: {
+                'item-uom': function($elem){
+                    return $elem.find('.item-uom').text();
+                },
+                'item-name': function($elem){
+                    return $elem.find('.item-name').text();
+                },
+                'group-name': function($elem){
+                    return $elem.find('.group-name').text();
+                },
+                'group-type': function($elem){
+                    return $elem.find('.group-type').text();
+                },
+                'item-type': function($elem){
+                    return $elem.find('.item-type').text();
+                }
+            },
+            sortBy : 'item-name'
+        });
+
+        $('#sorting a').click(function(element){
+            $('#sorting a').removeClass("active");
+            $(this).addClass("active");
+            var sortName = $(this).attr('href').slice(1);
+            $('#items-catalog').isotope({ sortBy : sortName });
+            return false;
+        });
+
+        for(var name in items)
+        {
+            var $newEls = $('<div class="catalog-item">' +
+                                '<div class="item-card">' +
+                                    '<p class="item-uom">' + items[name].uom + '</p>' +
+                                    '<p class="item-name">' + name + '</p>' +
+                                    '<p class="group-name">' + items[name].groupName + '</p>' +
+                                    '<p class="group-type">' + items[name].groupType +'</p>' +
+                                    '<p class="item-type">' + items[name].itemType + '</p>' +
+                                '</div>' +
+                            '</div>');
+            $('#items-catalog').isotope('insert', $newEls);
+        }
+    }
+
+    // Выполняет запрос заданного типа, по заданной URL;
+    // В случае успеха выполняется successCallback, в случае ошибки - errorCallback;
+    function executeQuery(queryMethod, queryUrl, queryData, successCallback, errorCallback)
+    {
+        $scope.loading = true;
+        $http({
+            method: queryMethod,
+            url: queryUrl,
+            data: queryData,
+            cache: $templateCache})
+        .success(successCallback)
+        .error(errorCallback);
+    }
+
+    function errorCallback(data, status)
+    {
+        console.log(data);
+        $scope.loading = false;
+    }
+
+    // Инициализация рецептов
+    function initializeCallback(data, status)
+    {
+        console.log("Request was successful");
+        $scope.recipes = $.extend(true, {}, data.Reciptes);
+
+        for(var key in $scope.recipes)
+        {
+            $scope.productionRecipeName = key;
+            $scope.planningRecipeName   = key;
+            break;
+        }
+
+        $('a[id="catalog-button"]').on('shown.bs.tab', function (e) {
+            if(!$scope.catalogIsSorted && e.target)
+            {
+                var sortName = $('#sorting').find(".disabled").first().attr('href').slice(1);
+                $('#items-catalog').isotope({ sortBy : sortName });
+                $scope.catalogIsSorted = true;
+            }
+        });
+
+        isotopeInit();
+
+        $scope.loading = false;
+    }
+
+    function addToHistory(inputs, outputs, recipeName, data, type)
+    {
+        var old = 
+        {
+            'inputs':     $.extend(true, {}, inputs),
+            'outputs':    $.extend(true, {}, outputs),
+            'recipeName': recipeName,
+            'date':       (new Date()).toLocaleString(),
+            'result':     data.result,
+            'status':     data.status,
+            'type':       type
+        };
+
+        $scope.history[($scope.historyLength++) + ''] = old;
+        $scope.recipes = data.newReciptes.Reciptes;
+    }
+
+    // Выполняется при оформлении производства
+    function successProductionCallback(data, status)
+    {
+        console.log("Request was successful");
+        addToHistory($scope.cylinder.inputs, $scope.cylinder.outputs, $scope.productionRecipeName, data, 'production');
+        $scope.loading = false;
+
+        $('html, body').animate({
+            scrollTop: $("#productionInputs").offset().top
+        }, "slow");
+    }
+
+    // Выполняется при оформлении планирования
+    function successPlanningCallback(data, status)
+    {
+        console.log("Request was successful");
+        addToHistory($scope.planner.vessels, $scope.planner.outputs, $scope.planningRecipeName, data, 'planning');
+        $scope.loading = false;
+
+        $('html, body').animate({
+            scrollTop: $("#planning-inputs").offset().top
+        }, "slow");
+    }
+
+    function createSendData(recipeName, outputs, actionType)
+    {
+        var sendData =
+        {
+            dataAreaId: 'strd',
+            encoding: 'UTF-8',
+            actionType: actionType,
+            userId: 'test',
+            Order:
+            {
+                recipeName: recipeName,
+                totalCount: 0
+            }
+        };
+
+        for(var key in outputs)
+        {
+            sendData.Order.totalCount += outputs[key].qty;
+        }
+
+        return sendData;
+    }
+
+    // Выполняется при нажатии кнопки Пуск производства
+    $scope.productionExecute = function()
+    {
+        var sendData = createSendData($scope.productionRecipeName, $scope.cylinder.outputs, 'production');
+        executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successProductionCallback, errorCallback);
+    };
+
+    // Выполняется при нажатии кнопки Пуск планирования
+    $scope.planningExecute = function()
+    {
+        var sendData = createSendData($scope.planningRecipeName, $scope.planner.outputs, 'planning');
+        executeQuery($scope.methods.post, $scope.url, JSON.stringify(sendData), successPlanningCallback, errorCallback);
+    };
+
+    // Поличить корректную подпись для продукта
+    $scope.getOutputName = function(output, recipeName)
+    {
+        if($scope.recipes[recipeName].itemType == 40) 
+        {
+            return output.productName;
+        }
+        else
+        {
+            return output.productName + ' (' + output.pct + '%)';
+        }
+    };
+
+    // Поличить корректную подпись для продукта
+    $scope.getInputName = function(input, recipeName)
+    {
+        if($scope.recipes[recipeName].itemType == 40) 
+        {
+            return input.productName;
+        }
+        else
+        {
+            return input.productName + ' (' + input.pct + '%)';
+        }
+    };
+
+    $scope.inputSpanType = function()
+    {
+        var type = Math.ceil(12 / $scope.recipes[$scope.productionRecipeName].inputs.length);
+        if(type < 3) type = 3;
+        return type; 
+    };
+
+    $scope.outputSpanType = function()
+    {
+        var type = Math.ceil(12 / $scope.recipes[$scope.productionRecipeName].outputs.length);
+        if(type < 3) type = 3;
+        return type; 
+    };
+
+    $scope.inputHistorySpanType = function(recipeName)
+    {
+        var type = Math.ceil(12 / $scope.recipes[recipeName].inputs.length);
+        if(type < 3) type = 3;
+        return type; 
+    };
+
+    $scope.executeButtonDisabled = function()
+    {
+        return ($scope.loading || !$scope.productionRecipeName);
+    };
+
+    $scope.planningButtonDisabled = function()
+    {
+        return ($scope.loading || !$scope.planningRecipeName);
+    };
+
+    $scope.outputHistorySpanType = function(recipeName)
+    {
+        var type = Math.ceil(12 / $scope.recipes[recipeName].outputs.length);
+        if(type < 3) type = 3;
+        return type; 
+    };
+
+    $scope.orderSuccess = function(old)
+    {
+        return (old.status == ResultStatus.OK || old.status == ResultStatus.OK_EXTRA);
+    };
+
+    $scope.setProductionRecipeName = function(name) {
+        $scope.productionRecipeName = name;
+    };
+
+    $scope.setPlanningRecipeName = function(name) {
+        $scope.planningRecipeName = name;
+    };
+};
+
+bizflow.controller("bizFlowCtrl", bizFlowCtrl);
+
+bizflow.directive('cylinder', CylinderDirective);
+bizflow.directive('history', HistoryDirective);
+
+bizflow.directive('commVessels', CommVesselsDirective);
+bizflow.directive('planning', PlanningProductDirective);
+
+function HistoryDirective($compile) 
+{       
+    return {
+        link: function($scope, element, attrs) {
+            var key     = attrs.key;
+            var history = $scope.history[key];
+            var tpl;
+
+            switch(history['type'])
+            {
+                case 'production':
+                    tpl = $compile('<div class="row-fluid" id="inputs"></div>')($scope);
+                    $(element).find('#history').append(tpl);
+                    tpl = $compile('<div class="row-fluid" id="operation"></div>')($scope);
+                    $(element).find('#history').append(tpl);
+                    tpl = $compile('<div class="row-fluid" id="outputs"></div>')($scope);
+                    $(element).find('#history').append(tpl);
+
+                    for(var label in history.inputs)
+                    {
+                        tpl = $compile( '<div class="span' + $scope.inputHistorySpanType(history.recipeName) + '">' +
+                                            '<div class="history-body circle-border">' +
+                                                '<ul>' +
+                                                    '<li>' + label + '</li>' +
+                                                    '<li>' + history.inputs[label].qty + ' ' + history.inputs[label].uom  + '</li>' +
+                                                '</ul>' +
+                                            '</div>' +
+                                            '<div class="arrow-input"></div>' + 
+                                        '</div>')($scope);
+                        $(element).find("#inputs").append(tpl);
+                    }
+                    for(var label in history.outputs)
+                    {
+                        tpl = $compile( '<div class="span' + $scope.outputHistorySpanType(history.recipeName) + '">' +
+                                            '<div class="arrow-output"></div>' + 
+                                            '<div class="history-body circle-border">' +
+                                                '<ul>' +
+                                                    '<li>' + label + '</li>' +
+                                                    '<li>' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</li>' +
+                                                '</ul>' +
+                                            '</div>' +
+                                        '</div>')($scope);
+                        $(element).find("#outputs").append(tpl);
+                    }
+                    tpl = $compile( '<div class="span12 circle-border history-recipe-' + $scope.orderSuccess(history) + '">' +
+                                        '<h3>Операция: ' + history.recipeName + '</h3>' +
+                                        '<ul>' +
+                                            '<li>Дата: ' + history.date + '</li>' +
+                                            '<li>' + history.result + '</li>' +
+                                        '</ul>' +
+                                    '</div>')($scope);
+                    $(element).find("#operation").append(tpl);
+                    break;
+
+                case 'planning':
+                    for(var label in history.inputs)
+                    {
+                        var leftCount = history.inputs[label].qty - history.inputs[label].onWorkshop;
+                        if(leftCount < 0) leftCount = 0;
+                        leftCount = roundingTruncate(history.inputs[label].onStorage - leftCount, history.inputs[label].accuracy, history.inputs[label].rounding);
+
+                        var orderQty =  roundingTruncate(history.inputs[label].qty - history.inputs[label].onWorkshop, history.inputs[label].accuracy, history.inputs[label].rounding);
+                        if(orderQty < 0) orderQty = 0;
+
+                        var onWorkshopQty = history.inputs[label].qty;
+                        if(onWorkshopQty < history.inputs[label].onWorkshop) 
+                        {
+                            onWorkshopQty = history.inputs[label].onWorkshop;
+                        }
+                        onWorkshopQty = roundingTruncate(onWorkshopQty, history.inputs[label].accuracy, history.inputs[label].rounding);
+                        tpl = $compile( '<div class="row-fluid planning-history-row">' +
+                                            '<div class="span4 planning-history-body circle-border">' +
+                                                '<span>Остаток на складе: ' + leftCount + ' ' + history.inputs[label].uom + '</span>' +
+                                            '</div>' +
+                                            '<div class="span4 planning-history-body circle-border">' +
+                                                '<span>Взято со склада ' + label + ': ' + orderQty + ' ' + history.inputs[label].uom + '</span>' +
+                                            '</div>' +
+                                            '<div class="span4 planning-history-body circle-border">' +
+                                                '<span>В производстве: ' + onWorkshopQty + ' ' + history.inputs[label].uom + '</span>' +
+                                            '</div>' +
+                                        '</div>')($scope);
+                        $(element).find("#history").append(tpl);
+                    }
+                    for(var label in history.outputs)
+                    {
+                        tpl = $compile( '<div class="row-fluid" id="product">' +
+                                            '<div class="span12 circle-border history-recipe-' + $scope.orderSuccess(history) + '">' +
+                                                '<h3>Запланировано: ' + label + ': ' + history.outputs[label].qty + ' ' + history.outputs[label].uom + '</h3>' +
+                                                '<ul>' +
+                                                    '<li>Дата: ' + history.date + '</li>' +
+                                                    '<li>' + history.result + '</li>' +
+                                                '</ul>' +
+                                            '</div>' +
+                                        '</div>')($scope);
+                        $(element).find("#history").append(tpl);
+                    }
+                    break;
+            }
+        },
+
+        template:   '<div class="history circle-border" id="history">' +
+                    '</div>'
+    }
+}
+
+</script>
+
 <div id='bizflow'>
 <div ng-controller='bizFlowCtrl' class='container-fluid'>
 

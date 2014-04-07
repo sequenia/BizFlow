@@ -3,37 +3,39 @@ class BizFlowController < ApplicationController
 
   def home
     @back = get_background
+
+    @host = params[:host] || 'http://test-bmp.tk/'
   	# Если сессия уже существует
-  	if (session[:user_id] && session[:random_number] && cookies[:crypto_id])
+  	#if (session[:user_id] && session[:random_number] && cookies[:crypto_id])
   		# Если сессия валидна
-  		if (cookies[:crypto_id].to_i / session[:random_number].to_i == session[:user_id].to_i && 
-          session[:last_seen] > 10.minutes.ago)
-  			session[:random_number] = rand(1..100000)
-        session[:last_seen] = Time.now
-  			cookies[:crypto_id] = session[:user_id] * session[:random_number]
-  		else
-  			cookies.delete :crypto_id
-  			reset_session 
+  		#if (cookies[:crypto_id].to_i / session[:random_number].to_i == session[:user_id].to_i && 
+        #session[:last_seen] > 10.minutes.ago)
+  			#session[:random_number] = rand(1..100000)
+        #session[:last_seen] = Time.now
+  			#cookies[:crypto_id] = session[:user_id] * session[:random_number]
+  		#else
+  			#cookies.delete :crypto_id
+  			#reset_session 
   			#redirect_to "http://cn.ru/"
-  		end
+  		#end
     # Если сессии не было
-  	else
-  		@login = params[:login]
-  		if @login
-  			session[:user_id] = rand(1..100000)
-  			session[:random_number] = rand(1..100000)
-        session[:last_seen] = Time.now
-  			cookies[:crypto_id] = session[:user_id] * session[:random_number]
+  	#else
+  		#@login = params[:login]
+  		#if @login
+  			#session[:user_id] = rand(1..100000)
+  			#session[:random_number] = rand(1..100000)
+        #session[:last_seen] = Time.now
+  			#cookies[:crypto_id] = session[:user_id] * session[:random_number]
         #puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!POPKA"
         #puts @login
-  		else
-  			cookies.delete :crypto_id
-  			reset_session
+  		#else
+  			#cookies.delete :crypto_id
+  			#reset_session
         #puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!PISKA"
         #puts @login
   			#redirect_to "http://test-bmp.tk/"
-  		end
-  	end
+  		#end
+  	#end
   end
 
   def set_background
