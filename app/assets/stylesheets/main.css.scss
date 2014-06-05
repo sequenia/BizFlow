@@ -160,21 +160,24 @@ input[type="text"] {
 }
 
 .item-card {
-  background-color: #59A7F7;
-  border: 1px solid #428EDD;
-  padding: 0.5em;
-  margin: 0.5em;
-  width: 13.3em;
+	background-color: #B6B6B6;
 
-  -webkit-box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
-  -moz-box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
-  -o-box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
-  box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
+	text-shadow: 2px 2px 3px rgba(149, 150, 150, 1);
 
-  -webkit-transition: all 0.1s ease;
-  -moz-transition: all 0.1s ease;
-  -o-transition: all 0.1s ease;
-  transition: all 0.1s ease;
+	border: 2px solid #C7C7C7;
+	padding: 0.5em;
+	margin: 0.5em;
+	width: 16.0em;
+
+	-webkit-box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
+	-moz-box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
+	-o-box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
+	box-shadow: 0 0 0.4em rgba(0,0,0,0.3);
+
+	-webkit-transition: all 0.1s ease;
+	-moz-transition: all 0.1s ease;
+	-o-transition: all 0.1s ease;
+	transition: all 0.1s ease;
 }
 
 .item-card:hover {
@@ -187,19 +190,21 @@ input[type="text"] {
   -moz-transform: scale(1.05);
   -o-transform: scale(1.05);
   transform: scale(1.05);
+
+  cursor: pointer;
 }
 
 .item-uom,
 .item-type,
-.group-name,
-.group-type {
-  color: #212121;
-  opacity: 0.7;
+.item-id,
+.item-group {
   margin-bottom: 0em;
 }
 
 .item-uom {
+  color: #FFFFFF;
   text-align: right;
+  font-size: 1.5em;
 }
 
 .item-name {
@@ -207,6 +212,21 @@ input[type="text"] {
   color: #FFFFFF;
   font-size: 1.5em;
   margin-bottom: 0.3em;
+}
+
+.item-id {
+	font-size: 1.2em;
+	color: #F9F9F9;
+}
+
+.item-group {
+	font-size: 1.2em;
+	color: #222222;
+}
+
+.item-type {
+	font-size: 1.2em;
+	color: #222222;
 }
 
 #sorting {

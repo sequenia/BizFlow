@@ -32,6 +32,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     };
 
     $scope.url            = '<%= @host %>bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8&module=production'; 
+    $scope.InventUrl      = '<%= @host %>bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8&module=invent'; 
     $scope.loading        = true;
     $scope.cylinder       = new CylinderItems();
     $scope.planner        = new PlannerItems();
@@ -41,86 +42,23 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     $scope.planningRecipeName   = '';
     $scope.recipes;
     $scope.catalogIsSorted = false;
+    $scope.items          = {};
 
     init();
 
     function init()
     {
-        executeQuery($scope.methods.get, $scope.url, "", initializeCallback, errorCallback);
+        executeQuery($scope.methods.get, $scope.url,       "", initializeCallback, errorCallback);
+        executeQuery($scope.methods.get, $scope.InventUrl, "", isotopeInit,        errorCallback);
     }
 
-    function isotopeInit()
+    function isotopeInit(data, status)
     {
-        var items = 
-        {
-            'Имя 1': 
-            {
-                'groupName': 'Группа 1',
-                'groupType': 'Производимый',
-                'uom':       'Кг',
-                'itemType':  'Тип 1'
-            },
-            'Имя 2': 
-            {
-                'groupName': 'Группа 3',
-                'groupType': 'Производимый',
-                'uom':       'Мл',
-                'itemType':  'Тип 1'
-            },
-            'Имя 3': 
-            {
-                'groupName': 'Группа 2',
-                'groupType': 'Непроизводимый',
-                'uom':       'Мл',
-                'itemType':  'Тип 1'
-            },
-            'Имя 4': 
-            {
-                'groupName': 'Группа 1',
-                'groupType': 'Непроизводимый',
-                'uom':       'Кг',
-                'itemType':  'Тип 3'
-            },
-            'Имя 5': 
-            {
-                'groupName': 'Группа 1',
-                'groupType': 'Производимый',
-                'uom':       'Мл',
-                'itemType':  'Тип 2'
-            },
-            'Имя 6': 
-            {
-                'groupName': 'Группа 2',
-                'groupType': 'Непроизводимый',
-                'uom':       'Мл',
-                'itemType':  'Тип 1'
-            },
-            'Имя 7': 
-            {
-                'groupName': 'Группа 2',
-                'groupType': 'Производимый',
-                'uom':       'Мл',
-                'itemType':  'Тип 1'
-            },
-            'Имя 8': 
-            {
-                'groupName': 'Группа 2',
-                'groupType': 'Производимый',
-                'uom':       'Кг',
-                'itemType':  'Тип 3'
-            },
-            'Имя 9': 
-            {
-                'groupName': 'Группа 1',
-                'groupType': 'Непроизводимый',
-                'uom':       'Кг',
-                'itemType':  'Тип 1'
-            }
-        };
+        $scope.items = data.items;
 
         $('#items-catalog').isotope({
             itemSelector: '.catalog-item',
-            layoutMode:   'fitRows',
+            layoutMode:   'masonry',
             getSortData: {
                 'item-uom': function($elem){
                     return $elem.find('.item-uom').text();
@@ -128,11 +66,11 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
                 'item-name': function($elem){
                     return $elem.find('.item-name').text();
                 },
-                'group-name': function($elem){
-                    return $elem.find('.group-name').text();
+                'item-group': function($elem){
+                    return $elem.find('.item-group').text();
                 },
-                'group-type': function($elem){
-                    return $elem.find('.group-type').text();
+                'item-id': function($elem){
+                    return $elem.find('.item-id').text();
                 },
                 'item-type': function($elem){
                     return $elem.find('.item-type').text();
@@ -149,19 +87,20 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
             return false;
         });
 
-        for(var name in items)
-        {
+        console.log($scope.items);
+
+        angular.forEach($scope.items, function(item) {
             var $newEls = $('<div class="catalog-item">' +
                                 '<div class="item-card">' +
-                                    '<p class="item-uom">' + items[name].uom + '</p>' +
-                                    '<p class="item-name">' + name + '</p>' +
-                                    '<p class="group-name">' + items[name].groupName + '</p>' +
-                                    '<p class="group-type">' + items[name].groupType +'</p>' +
-                                    '<p class="item-type">' + items[name].itemType + '</p>' +
+                                    '<p class="item-uom">' + item.itemUOM + '</p>' +
+                                    '<p class="item-name">' + item.itemName + '</p>' +
+                                    '<p class="item-id">' + item.itemId +'</p>' +
+                                    '<p class="item-group">Группа: ' + item.itemGroup + '</p>' +
+                                    '<p class="item-type">Тип: ' + item.itemType + '</p>' +
                                 '</div>' +
                             '</div>');
             $('#items-catalog').isotope('insert', $newEls);
-        }
+        });
     }
 
     // Выполняет запрос заданного типа, по заданной URL;
@@ -205,8 +144,6 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
                 $scope.catalogIsSorted = true;
             }
         });
-
-        isotopeInit();
 
         $scope.loading = false;
     }
@@ -573,8 +510,8 @@ function HistoryDirective($compile)
                     <div id="items-catalog-body">
                         <div id="sorting" class='btn-group'>
                             <a class="btn btn-bf" href="#item-name">Наименование</a>
-                            <a class="btn btn-bf" href="#group-name">Группа</a>
-                            <a class="btn btn-bf" href="#group-type">Тип группы</a>
+                            <a class="btn btn-bf" href="#item-group">Группа</a>
+                            <a class="btn btn-bf" href="#item-id">Идентификатор</a>
                             <a class="btn btn-bf" href="#item-type">Тип</a>
                             <a class="btn btn-bf" href="#item-uom">Единица измерения</a>
                         </div>
