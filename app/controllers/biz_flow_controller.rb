@@ -5,6 +5,7 @@ class BizFlowController < ApplicationController
     @back = get_background
 
     @host = params[:host] || 'http://test-bmp.tk/'
+    @data_area_id = params[:dataAreaId] || "strd"
   	# Если сессия уже существует
   	#if (session[:user_id] && session[:random_number] && cookies[:crypto_id])
   		# Если сессия валидна

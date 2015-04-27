@@ -31,8 +31,8 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
         post: 'POST'
     };
 
-    $scope.url            = '<%= @host %>bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8&module=production'; 
-    $scope.InventUrl      = '<%= @host %>bmp/bizflow.json?dataAreaId=strd&encoding=UTF-8&module=invent'; 
+    $scope.url            = '<%= @host %>bmp/bizflow.json?dataAreaId=<%= @data_area_id %>&encoding=UTF-8&module=production'; 
+    $scope.InventUrl      = '<%= @host %>bmp/bizflow.json?dataAreaId=<%= @data_area_id %>&encoding=UTF-8&module=invent'; 
     $scope.loading        = true;
     $scope.cylinder       = new CylinderItems();
     $scope.planner        = new PlannerItems();
@@ -193,7 +193,7 @@ var bizFlowCtrl = function($scope, $http, $templateCache)
     {
         var sendData =
         {
-            dataAreaId: 'strd',
+            dataAreaId: '<%= @data_area_id %>',
             encoding: 'UTF-8',
             actionType: actionType,
             userId: 'test',
